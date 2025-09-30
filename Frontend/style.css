@@ -1,0 +1,158 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    background-color: #E8E8E8;
+}
+
+ul {
+    list-style: none;
+}
+
+/* Стили шапки */
+.header {
+    background-color: #FFCF88;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    position: relative;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav {
+    display: flex;
+    flex: 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Навигационное меню */
+.nav-list {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+.nav-list a {
+        opacity: 0.7;
+    display: inline-block;
+    width: 250px;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: color 0.3s ease;
+    padding: 5px 10px;
+    background-color: #f8f9fa;
+    border-radius: 25px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-list a.active {
+    opacity: 1;
+    background-color: #ffffff;
+}
+
+.nav-list a:hover {
+    opacity: 0.9;
+    color: #007bff;
+}
+
+/* Кнопки */
+.header-buttons {
+    display: flex;
+    gap: 15px;
+    z-index: 2;
+}
+
+.btn {
+    align-items: center;
+    margin-right: auto;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-login {
+    background-color: transparent;
+    color: #000000;
+}
+
+.btn-login:hover {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.flexscroll-box{
+    justify-content: center;
+    margin: 50px;
+    display: flex;
+    gap: 20px;
+}
+.scroll-box {
+    list-style: none;
+    width: 900px;
+    height: 1050px;
+    overflow-y: auto;
+    padding: 20px;
+    scroll-behavior: smooth;
+    background-color: #ffffff;
+    border-radius: 50px;
+}
+
+.scroll-box-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 0;
+}
+
+.scroll-box-item li {
+    width: 90%;
+    background-color: #DCDCDC;
+    border-radius: 100px;
+    padding: 15px 30px;
+    text-align: center;
+    align-items: left;
+}
+
+.scroll-box-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    flex-shrink: 0; /* Чтобы изображение не сжималось */
+}
+
+.item-label {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    margin: 0;
+}
+
