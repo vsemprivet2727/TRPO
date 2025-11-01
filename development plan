@@ -1,0 +1,9 @@
+Этап	Что сделать	Ключевые методы
+1	Подключить Express и Mongoose	express(), mongoose.connect()
+2	Создать модель Book	mongoose.Schema()
+3	Реализовать GET /books	Book.find(filter).sort().skip().limit()
+4	Добавить POST /books	new Book(req.body).save()
+5	Добавить GET /books/:id	Book.findById()
+6	Добавить PUT /books/:id	Book.findByIdAndUpdate()
+7	Добавить DELETE /books/:id	Book.findByIdAndDelete()
+8	Тестировать через Postman или браузер	GET /api/books?...
