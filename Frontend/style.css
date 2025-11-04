@@ -8,21 +8,27 @@ body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
     background-color: #E8E8E8;
+    gap: 20px;
 }
 
 ul {
     list-style: none;
 }
 
-/* Стили шапки */
+main {
+    margin-top: 80px;
+}
+
 .header {
+    width: 100%;
+    top: 0;
+    left: 0;
     background-color: #FFCF88;
-    padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 70px;
-    position: relative;
+    position: fixed;
     top: 0;
     z-index: 1000;
 }
@@ -35,7 +41,6 @@ ul {
     transform: translateX(-50%);
 }
 
-/* Навигационное меню */
 .nav-list {
     display: flex;
     list-style: none;
@@ -43,7 +48,7 @@ ul {
 }
 
 .nav-list a {
-        opacity: 0.7;
+    opacity: 0.7;
     display: inline-block;
     width: 250px;
     text-align: center;
@@ -70,7 +75,6 @@ ul {
     color: #007bff;
 }
 
-/* Кнопки */
 .header-buttons {
     display: flex;
     gap: 15px;
@@ -112,7 +116,7 @@ ul {
     justify-content: center;
     margin: 50px;
     display: flex;
-    gap: 20px;
+    gap: 10px;
 }
 .scroll-box {
     list-style: none;
@@ -122,7 +126,7 @@ ul {
     padding: 20px;
     scroll-behavior: smooth;
     background-color: #ffffff;
-    border-radius: 50px;
+    border-radius: 50px;  
 }
 
 .scroll-box-item {
@@ -130,7 +134,7 @@ ul {
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    padding: 0;
+    padding: 15px;
 }
 
 .scroll-box-item li {
@@ -146,7 +150,7 @@ ul {
     width: 50px;
     height: 50px;
     object-fit: cover;
-    flex-shrink: 0; /* Чтобы изображение не сжималось */
+    flex-shrink: 0;
 }
 
 .item-label {
@@ -156,3 +160,40 @@ ul {
     margin: 0;
 }
 
+.item-data {
+    flex: 1;
+    text-align: left;
+    font-size: 8px;
+    
+}
+
+.filter-box {
+    margin: 10px;
+    z-index: 2;
+    overflow-y: auto;
+    left: 0;
+    display: flex;
+    list-style: none;
+    width: 400px;
+    height: 600px;
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 50px;
+}
+
+.filter-box-item {
+    padding-left: 20px;
+    padding-top: 10px;
+}
+
+.filter-box-item :hover {
+    border-radius: 15px;
+    background-color: #E8E8E8;
+}
+.filter-box-item label {
+    align-self: left;
+}
+.filter-box-item select {
+    border-radius: 15px;
+    text-align: center;
+}

@@ -24,15 +24,37 @@
     
     <main>
         <div class="flexscroll-box">
+            <div class="filter-box">
+                <ul class="filter-box-item">
+                    <li><input type="checkbox" name="is-we-have" id="checkbox-is-we-have"><label for="checkbox-is-we-have"> Есть в наличии</label></li>
+                    <li><label for="genre-select" >Жанр</label>
+                        <select id="genre-select">
+                            <!-- Ну тут с бд подгрузка короче-->
+                        </select>
+                    </li>
+                    <li><label for="publisher-select">Издатель</label>
+                        <select id="publisher-select">
+                            <!-- Ну тут с бд подгрузка короче-->
+                        </select>
+                    </li>
+                    <li>
+                        <label for="author-select">Автор</label>
+                        <select id="author-select">
+                            <!-- Ну тут с бд подгрузка короче-->
+                        </select>
+                    </li>
+                </ul>
+            </div>
         <div class="scroll-box">
-            <ul class="scroll-box-item">
-                <li>
-                    <img src="resources/Book open.png" alt="">
-                    <span class="item-label">Название</span>
-                </li>
-            </ul>
+            <div class="scroll-box-item">
+                <!-- Книги -->
+            </div>
+        </div>
+
         </div>
         </div>
     </main>
+
+    <script src="../backend/script.js"></script>
 </body>
 </html>
