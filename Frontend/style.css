@@ -153,18 +153,10 @@ main {
     flex-shrink: 0;
 }
 
-.item-label {
-    flex: 1;
-    text-align: center;
-    font-size: 16px;
-    margin: 0;
-}
-
-.item-data {
-    flex: 1;
-    text-align: left;
-    font-size: 8px;
-    
+.scroll-box-item button {
+    border: none;
+    background: none;
+    cursor: pointer;
 }
 
 .filter-box {
@@ -196,4 +188,39 @@ main {
 .filter-box-item select {
     border-radius: 15px;
     text-align: center;
+}
+
+ .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+ }
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 50px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+.book-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.book-card:hover {
+    transform: scale(1.05);
 }
