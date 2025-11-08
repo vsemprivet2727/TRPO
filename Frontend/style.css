@@ -121,12 +121,12 @@ main {
 .scroll-box {
     list-style: none;
     width: 900px;
-    height: 1050px;
+    height: 95vh;
     overflow-y: auto;
     padding: 20px;
     scroll-behavior: smooth;
     background-color: #ffffff;
-    border-radius: 50px;  
+    border-radius: 50px;
 }
 
 .scroll-box-item {
@@ -182,15 +182,31 @@ main {
     border-radius: 15px;
     background-color: #E8E8E8;
 }
+
 .filter-box-item label {
     align-self: left;
 }
+
 .filter-box-item select {
     border-radius: 15px;
     text-align: center;
 }
 
- .modal {
+.filter-box-item li:has(input[type="text"]) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-box-item input[type="text"] {
+    border-radius: 15px;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid #ccc;
+    flex: 1;
+}
+
+.modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -199,8 +215,8 @@ main {
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.5);
- }
-.modal-content {
+}
+ .modal-content {
     background-color: white;
     margin: 15% auto;
     padding: 20px;
@@ -217,10 +233,12 @@ main {
     font-size: 24px;
     cursor: pointer;
 }
+
 .book-card {
     cursor: pointer;
     transition: transform 0.2s;
 }
+
 .book-card:hover {
     transform: scale(1.05);
 }
