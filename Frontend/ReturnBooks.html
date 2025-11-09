@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Возврат книг</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        
+        <nav class="nav">
+            <ul class="nav-list">
+                <li><a href="Main.html">Книги</a></li>
+                <li><a href="ReturnBooks.html" class="active">Возврат книг</a></li>
+                <li><a href="Users.html">Читатели</a></li>
+            </ul>
+        </nav>
+        
+        <div class="header-buttons">
+            <button class="btn btn-login"><img src="resources/User.png" alt="Войти"></button>
+        </div>
+    </header>
+    
+    <main>
+        <div class="flexscroll-box">
+            <div class="filter-box">
+                <ul class="filter-box-item">
+                    <li>
+                        <label for="reader-select">Читатель</label>
+                        <select id="reader-select">
+                            <option value="">Выберите читателя</option>
+                            <!-- Загрузка из БД -->
+                        </select>
+                    </li>
+                    <li>
+                        <label for="book-select">Книга</label>
+                        <select id="book-select">
+                            <option value="">Выберите книгу</option>
+                            <!-- Загрузка из БД -->
+                        </select>
+                    </li>
+                    <li>
+                        <label for="email-input">Email читателя</label>
+                        <input type="email" id="email-input" placeholder="email@example.com" readonly>
+                    </li>
+                    <li>
+                        <label for="message-textarea">Текст сообщения</label>
+                        <textarea id="message-textarea" rows="5" placeholder="Уважаемый читатель, напоминаем вам о необходимости вернуть книгу..."></textarea>
+                    </li>
+                    <li>
+                        <button class="btn btn-primary" id="send-email-btn">Отправить письмо</button>
+                    </li>
+                </ul>
+            </div>
+        <div class="scroll-box">
+            <div class="scroll-box-item">
+                <h2>Книги, требующие возврата</h2>
+                <!-- Список книг для возврата -->
+                <ul id="return-books-list">
+                    <!-- Загрузка из БД -->
+                </ul>
+            </div>
+        </div>
+        </div>
+        <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Успешно!</h2>
+            <div id="modalContent">
+                <p>Письмо с требованием возврата книги успешно отправлено.</p>
+            </div>
+        </div>
+    </div>
+    </main>
+
+    <script src="../backend/script.js"></script>
+</body>
+</html>
+
