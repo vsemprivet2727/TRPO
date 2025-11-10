@@ -121,7 +121,7 @@ main {
 .scroll-box {
     list-style: none;
     width: 900px;
-    height: 95vh;
+    height: 90vh;
     overflow-y: auto;
     padding: 20px;
     scroll-behavior: smooth;
@@ -174,7 +174,7 @@ main {
     display: flex;
     list-style: none;
     width: 400px;
-    height: 600px;
+    height: 60vh;
     background-color: #ffffff;
     padding: 10px;
     border-radius: 50px;
@@ -193,12 +193,6 @@ main {
 .filter-box-item label {
     align-self: left;
     margin-bottom: 5px;
-}
-
-.filter-box-item li:has(label):not(:has(input[type="text"])):not(:has(textarea)) {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
 }
 
 .filter-box-item select {
@@ -254,6 +248,10 @@ main {
 .filter-box-item button.btn-primary {
     width: 100%;
     max-width: 200px;
+}
+
+.filter-box-item li:has(input[type="text"]) {
+    padding-top: 25px;
 }
 
 .modal {
