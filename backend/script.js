@@ -16,8 +16,8 @@ async function loadBooks() {
         displayBooks(books);
     }
      catch (error) {
-    console.error('Error loading books: ', error);
-}
+        console.error('Error loading books: ', error);
+     }
 }
 
 function displayBooks(books) {

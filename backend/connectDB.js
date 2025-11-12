@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-mongoose.connect('mongodb://localhost:27017/Library', {
+mongoose.connect('mongodb://localhost:27017/trpo', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });

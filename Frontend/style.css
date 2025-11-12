@@ -255,12 +255,13 @@ main {
 }
 
 .modal {
+    align-items: center;
     display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%;
+    width: 110%;
     height: 100%;
     background-color: rgba(0,0,0,0.5);
 }
@@ -268,15 +269,16 @@ main {
     background-color: white;
     margin: 15% auto;
     padding: 20px;
+    padding-left: 30px;
     border-radius: 50px;
-    width: 80%;
+    width: 70%;
     max-width: 500px;
     position: relative;
 }
 
 .close {
     position: absolute;
-    right: 15px;
+    right: 20px;
     top: 10px;
     font-size: 24px;
     cursor: pointer;
@@ -331,4 +333,20 @@ main {
 .return-book-info strong {
     display: block;
     margin-bottom: 5px;
+}
+
+.auth-box {
+    padding: 50px;
+    background-color: white;
+    width: 600px;
+    height: 500px;
+    border-radius: 50px;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.auth-box.show {
+    opacity: 1;
+    transform: translateY(0);
 }
