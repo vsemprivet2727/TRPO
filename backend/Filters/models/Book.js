@@ -9,6 +9,7 @@ const bookSchema = new mongoose.Schema({
   pages: Number,
   isbn: String,
   language: String,
+  inStock: Boolean,
 });
 
 export default mongoose.model("Book", bookSchema);
