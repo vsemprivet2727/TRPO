@@ -3,11 +3,14 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         authBox.classList.add('show');
     }, 100);
+
+    togglePassword('password-input', 'togglePassword')
+    togglePassword('password-repeat-input', 'toggleRepeatPassword');
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordInput = document.getElementById('password-input');
+function togglePassword(passwordID, iconID) {
+    const togglePassword = document.getElementById(iconID);
+    const passwordInput = document.getElementById(passwordID);
     
     if (togglePassword && passwordInput) {
         togglePassword.addEventListener('click', function() {
@@ -24,4 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
+}
+
+

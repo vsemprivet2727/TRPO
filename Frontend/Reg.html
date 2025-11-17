@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Библиотека</title>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <form>
     <div class="flexscroll-box">
         <div class="auth-box">
-            <h2 align="center">Войдите в аккаунт</h2><br>
+            <h2 align="center">Зарегистрируйтесь</h2><br>
             <input type="text" id="login-text" placeholder="Логин">
+            <input type="email" id="email-input" placeholder="Эл. Почта" required>
             <div class="password-container">
                 <input type="password" id="password-input" placeholder="Пароль" required>
                 <span class="toggle-password" id="togglePassword">
                 <img src="resources/Eye.png" class="eye-icon" alt="Показать пароль">
                 </span>
             </div>
-            <button class="btn btn-primary"><b>Войти</b></button>
-            <a href="Reg.html">Нет учетной записи? Создать</a>
+            <div class="password-container">
+                <input type="password" id="password-repeat-input" placeholder="Повторите пароль" required>
+                <span class="toggle-password" id="toggleRepeatPassword">
+                <img src="resources/Eye.png" class="eye-icon" alt="Показать пароль">
+                </span>
+            </div>
+            <button class="btn btn-primary"><b>Создать</b></button>
+            <a href="Auth.html">Уже есть аккаунт? Войти</a>
             </div>
         </div>
     </div>
+</form>
 </body>
 <script src="../backend/auth.js"></script>
 </html>

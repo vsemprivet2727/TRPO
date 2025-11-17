@@ -83,7 +83,6 @@ function loadTestBooks() {
         bookElement.className = 'scroll-box-item book-card';
         bookElement.innerHTML = `
             <li>
-                
                 <span class="item-label">${book.title}</span>
                 <img src="resources/Book open.png" alt="Книга" align="right">
             </li>
