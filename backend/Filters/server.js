@@ -1,14 +1,19 @@
 import express from "express";
 import mongoose from "mongoose";
 import Book from "./models/Book.js";
+import cors from 'cors';
+
+
 
 const app = express();
+
+app.use(cors()); // разрешает все источники
 
 mongoose.connect("mongodb://localhost:27017/trpo")
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
 
-app.get("/books", async (req, res) => {
+app.get("/api/books", async (req, res) => {
   try {
     const { author, genre, language, publisher, minPages, maxPages, title } = req.query;
 
