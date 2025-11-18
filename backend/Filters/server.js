@@ -14,26 +14,22 @@ mongoose.connect("mongodb://localhost:27017/trpo")
   .catch(err => console.error("MongoDB connection error:", err));
 
 app.get("/api/books", async (req, res) => {
-  try {
-    const { author, genre, language, publisher, minPages, maxPages, title } = req.query;
-
+    try {
+    const { author, publisher, year, inStock } = req.query;
     const filter = {};
 
-    if (author) filter.author = author;
-    if (publisher) filter.publisher = publisher;
-    if (language) filter.language = language;
-    if (title) filter.title = new RegExp(title, "i");
+    if (author) filter.author = new RegExp(author, "i");
+    if (publisher) filter.publisher = new RegExp(publisher, "i");
 
-    if (genre) filter.genre = { $in: [genre] };
+    if (year) {
+      const start = new Date(`${year}-01-01`);
+      const end   = new Date(`${year}-12-31`);
+      filter.publishDate = { $gte: start, $lte: end };
+    }
 
-    if (minPages || maxPages)
-      filter.pages = {
-        ...(minPages && { $gte: Number(minPages) }),
-        ...(maxPages && { $lte: Number(maxPages) }),
-      };
+    if (inStock === "true") filter.inStock = true;
 
     const books = await Book.find(filter);
-
     res.json(books);
   } catch (err) {
     res.status(500).json({ error: err.message });
