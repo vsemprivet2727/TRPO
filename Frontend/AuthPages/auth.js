@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    //Анимация появления блока
     const authBox = document.querySelector('.auth-box');
     setTimeout(() => {
         authBox.classList.add('show');
@@ -8,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     togglePassword('password-repeat-input', 'toggleRepeatPassword');
 });
 
+//Функция переключения пароля
 function togglePassword(passwordID, iconID) {
     const togglePassword = document.getElementById(iconID);
     const passwordInput = document.getElementById(passwordID);

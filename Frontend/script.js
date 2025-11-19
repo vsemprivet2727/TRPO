@@ -1,8 +1,8 @@
 const API_URL = 'http://localhost:3000/api';
 
-document.addEventListener('DOMContentLoaded', function() {
+/*document.addEventListener('DOMContentLoaded', function() {
     loadBooks();
-});
+});*/
 
 async function loadBooks() {
     console.log('Загрузка книг с API...');
@@ -22,7 +22,7 @@ async function loadBooks() {
 }
 
 function displayBooks(books) {
-    const scrollBox = document.querySelector('.scroll-box');
+    const scrollBox = document.getElementById('books-scroll-box');
     scrollBox.innerHTML = '';
     if (books.length === 0) {
         scrollBox.innerHTML = '<p>Книги не найдены</p>';
@@ -52,18 +52,6 @@ function displayBooks(books) {
         scrollBox.appendChild(bookItem);
     });
 }
-/*
-document.addEventListener('DOMContentLoaded', function(){
-    const bookItems = document.querySelectorAll('.scroll-box-item');
-
-    bookItems.forEach(item=> {
-        item.addEventListener(cancelIdleCallback, function(){
-            const bookId = this.getAttribute('data-book-id');
-            
-        })
-    })
-})
-*/
 
 document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById('bookModal');
@@ -86,46 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-
-//ПЕРЕДЕЛАТЬ ПОТОМ НЕСЧАСТНУЮ ЗАТЫЧКУ!!1!!
-/*const testBooks = [
-    { id: 1, title: "Война и мир", author: "Лев Толстой", year: 1869, genre: "Роман" },
-    { id: 2, title: "Преступление и наказание", author: "Федор Достоевский", year: 1866, genre: "Роман" },
-    { id: 3, title: "Мастер и Маргарита", author: "Михаил Булгаков", year: 1967, genre: "Фантастика" },
-    { id: 4, title: "1984", author: "Джордж Оруэлл", year: 1949, genre: "Антиутопия" },
-    { id: 5, title: "Гарри Поттер", author: "Дж. К. Роулинг", year: 1997, genre: "Фэнтези" }
-];*/
-
 const modal = document.getElementById('bookModal');
 const closeBtn = document.querySelector('.close');
 
 document.addEventListener('DOMContentLoaded', function() {
-    //loadTestBooks();
     initModal();
 });
-/*
-function loadTestBooks() {
-    const scrollBox = document.querySelector('.scroll-box');
-    
-    testBooks.forEach(book => {
-        const bookElement = document.createElement('ul');
-        bookElement.className = 'scroll-box-item book-card';
-        bookElement.innerHTML = `
-            <li>
-                
-                <span class="item-label">${book.title}</span>
-                <img src="resources/Book open.png" alt="Книга" align="right">
-            </li>
-        `;
-        
-        bookElement.addEventListener('click', function() {
-            openBookModal(book);
-        });
-        
-        scrollBox.appendChild(bookElement);
-    });
-}
-*/
+
 function initModal() {
     closeBtn.addEventListener('click', closeModal);
     
@@ -176,11 +131,12 @@ const yearInput = document.getElementById("input-year");
 const inStockCheckbox = document.getElementById("checkbox-is-we-have");
 
 // Назначаем слушатели
-authorSelect.addEventListener("change", applyFilters);
-publisherSelect.addEventListener("change", applyFilters);
-genreSelect.addEventListener("change", applyFilters);
-yearInput.addEventListener("input", applyFilters);
-inStockCheckbox.addEventListener("change", applyFilters);
+if (authorSelect) authorSelect.addEventListener("change", applyFilters);
+if (publisherSelect) publisherSelect.addEventListener("change", applyFilters);
+if (genreSelect) genreSelect.addEventListener("change", applyFilters);
+if (yearInput) yearInput.addEventListener("input", applyFilters);
+if (inStockCheckbox) inStockCheckbox.addEventListener("change", applyFilters);
+
 
 // Функция фильтрации
 async function applyFilters() {
@@ -249,13 +205,55 @@ async function populateFilters() {
     }
 }
 
+async function loadUsers() {
+    const scrollBox = document.getElementById('users-scroll-box')
+    scrollBox.innerHTML = `
+        <div class="scroll-box-item">
+            <h2>Список читателей</h2>
+        </div>
+    `;
+     try {
+        const response = await fetch(`${API_URL}/users`);
+        if (!response.ok) throw new Error('Ошибка загрузки пользователей');
+
+        const users = await response.json();
+
+        users.forEach(user => {
+            const userItem = document.createElement('ul');
+            userItem.className = 'scroll-box-item user-card';
+            userItem.innerHTML = `
+                <li>
+                    <strong>${user.username}</strong> (${user.email})<br>
+                    Взятые книги: ${user.borrowedBooks.map(b => b.bookId + " (до " + new Date(b.returnDate).toLocaleDateString() + ")").join(", ")}
+                </li>
+            `;
+
+            scrollBox.appendChild(userItem);
+        });
+
+    } catch (err) {
+        console.error(err);
+        scrollBox.innerHTML += '<p>Не удалось загрузить пользователей</p>';
+    }
+}
+
 
 
 // --------------------------------------------
-// ЕДИНСТВЕННЫЙ DOMContentLoaded
+// DOMContentLoaded
 // --------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-    populateFilters();  // сначала заполняем селекты
-    loadBooks();        // затем загружаем книги
-    initModal();        // и только потом подключаем модалку
+
+    // Если мы на странице книг (Main.html)
+    if (window.location.pathname.includes("Main.html")) {
+        populateFilters();
+        loadBooks();
+        initModal();
+    }
+
+    // Если мы на странице пользователей (Users.html или ReturnBooks.html)
+    if (document.getElementById("users-scroll-box")) {
+        loadUsers();
+    }
 });
+

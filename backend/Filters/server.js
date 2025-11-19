@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import Book from "./models/Book.js";
+import User from "./models/User.js"
 import cors from 'cors';
 
 
@@ -31,6 +32,15 @@ app.get("/api/books", async (req, res) => {
 
     const books = await Book.find(filter);
     res.json(books);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
