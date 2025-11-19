@@ -38,9 +38,9 @@ function displayBooks(books) {
         bookItem.className = 'scroll-box-item book-card';
         bookItem.innerHTML = `
             <li>
-                <img src="resources/Book open.png" alt="Книга">
-                <span class="item-label">${book.title}</span>
-                <small>${book.author}</small>
+            <span class="item-label">${book.title}</span>
+            <small>${book.author}</small>
+            <img src="../resources/Book open.png" alt="Книга">
             </li>
 
         `;
