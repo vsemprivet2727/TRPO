@@ -1,0 +1,52 @@
+
+.auth-box {
+    padding: 40px;
+    margin-bottom: 250px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: min(70vh, 600px); 
+    height: auto;
+    border-radius: 50px;
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    filter: blur(5px);
+    transition: opacity 0.8s ease, transform 0.8s ease, filter 0.8s ease;
+    pointer-events: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    font-size: 24px;
+}
+
+.auth-box.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+    pointer-events: auto;
+}
+
+.auth-box.hide {
+    opacity: 0;
+    transform: translateY(25px) scale(0.95);
+    filter: blur(5px);
+    pointer-events: none;
+}
+
+.auth-box input[type="text"],
+.auth-box input[type="email"],
+.auth-box input[type="password"] {
+    font-size: 18px;
+    border: none;
+    background-color: #ccc;
+    border-radius: 25px;
+    padding-left: 20px;
+    width: 95%;
+    height: 40px;
+}
+
+form {
+    position:absolute;
+    width:100%;
+    top:0;
+    left:0;
+}
