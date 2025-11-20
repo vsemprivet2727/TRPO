@@ -1,8 +1,5 @@
 const API_URL = 'http://localhost:3000/api';
 
-/*document.addEventListener('DOMContentLoaded', function() {
-    loadBooks();
-});*/
 
 async function loadBooks() {
     console.log('Загрузка книг с API...');
@@ -23,15 +20,17 @@ async function loadBooks() {
 
 function displayBooks(books) {
     const scrollBox = document.getElementById('books-scroll-box');
-    scrollBox.innerHTML = '';
+    scrollBox.innerHTML = `
+        <div class="scroll-box-item">
+            <h2>Книги у нас</h2>
+        </div>
+    `;
+    
     if (books.length === 0) {
         scrollBox.innerHTML = '<p>Книги не найдены</p>';
         return;
     }
     
-    
-
-    // title author publishDate publisher genre pages language
     
     books.forEach(book => {
         const bookItem = document.createElement('ul');
@@ -130,7 +129,7 @@ const genreSelect = document.getElementById("genre-select");
 const yearInput = document.getElementById("input-year");
 const inStockCheckbox = document.getElementById("checkbox-is-we-have");
 
-// Назначаем слушатели
+// Назначаем слушателя события
 if (authorSelect) authorSelect.addEventListener("change", applyFilters);
 if (publisherSelect) publisherSelect.addEventListener("change", applyFilters);
 if (genreSelect) genreSelect.addEventListener("change", applyFilters);
@@ -244,14 +243,14 @@ async function loadUsers() {
 // --------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Если мы на странице книг (Main.html)
+    // Если на странице книг (Main.html)
     if (window.location.pathname.includes("Main.html")) {
         populateFilters();
         loadBooks();
         initModal();
     }
 
-    // Если мы на странице пользователей (Users.html или ReturnBooks.html)
+    // Если на странице пользователей (Users.html или ReturnBooks.html)
     if (document.getElementById("users-scroll-box")) {
         loadUsers();
     }
