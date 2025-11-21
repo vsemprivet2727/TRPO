@@ -190,36 +190,60 @@ main {
 }
 
 .filter-box-item {
-    padding-left: 20px;
-    padding-top: 10px;
+    margin: 20px;
+    margin-top: 10px;
 }
 
-.filter-box-item :hover {
-    border-radius: 15px;
-    background-color: #E8E8E8;
+.filter-box-table {
+    margin: 20px 5px;
+    table-layout: fixed;
 }
 
-.filter-box-item label {
+.filter-box-table td {
+    padding: 8px;
+    vertical-align: middle;
+}
+
+.filter-box-table td:first-child {
+    width: 40%;
+    text-align: left;
+    padding-right: 15px;
+}
+
+.filter-box-table td:last-child {
+    width: 60%;
+    text-align: left;
+}
+
+.filter-box-table tr {
+    max-height: 40px;
+    display: block;
+}
+
+.filter-box-table label {
     align-self: left;
     margin-bottom: 5px;
 }
 
-.filter-box-item select {
+.filter-box-table select {
     border-radius: 15px;
     text-align: center;
     padding: 5px;
     border: 1px solid #ccc;
     width: 100%;
+    transition: padding 0.3s ease, background-color 0.3s ease, border-radius 0.3s ease, margin 0.3s ease;
 }
 
-.filter-box-item li:has(input[type="text"]) {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.filter-box-table select:hover {
+    padding: 6px 5px;
+    border-radius: 15px;
+    background-color: #efeeee;
 }
 
-.filter-box-item input[type="text"],
-.filter-box-item input[type="email"] {
+.filter-box-table input[type="text"],
+.filter-box-table input[type="email"],
+.filter-box-table input[type="number"] {
+    display: table-cell;
     border-radius: 15px;
     text-align: center;
     padding: 5px;
@@ -227,18 +251,23 @@ main {
     flex: 1;
 }
 
-.filter-box-item input[type="email"][readonly] {
+.filter-box-table input[type="email"][readonly] {
     background-color: #f5f5f5;
     cursor: not-allowed;
 }
 
-.filter-box-item li:has(textarea) {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.filter-box-table td:has(input[type="checkbox"]) {
+    width: 10%;
+    border-radius: 15px;
+    cursor: pointer;
 }
 
-.filter-box-item textarea {
+.filter-box-table td:has(textarea) {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-box-table textarea {
     border-radius: 15px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -248,19 +277,15 @@ main {
     min-height: 100px;
 }
 
-.filter-box-item li:has(button.btn-primary) {
+.filter-box-table td:has(button.btn-primary) {
     display: flex;
     justify-content: center;
     margin-top: 10px;
 }
 
-.filter-box-item button.btn-primary {
+.filter-box-table button.btn-primary {
     width: 100%;
     max-width: 200px;
-}
-
-.filter-box-item li:has(input[type="text"]) {
-    padding-top: 25px;
 }
 
 .modal {
