@@ -11,9 +11,9 @@
         
         <nav class="nav">
             <ul class="nav-list">
-                <li><a href="Main.html">Книги</a></li>
-                <li><a href="ReturnBooks.html">Возврат книг</a></li>
-                <li><a href="Users.html" class="active">Читатели</a></li>
+                <li><a href="Main.html"><img src="../resources/navbar/open-book.png" alt="">Книги</a></li>
+                <li><a href="ReturnBooks.html"><img src="../resources/navbar/book.png" alt="">Возврат книг</a></li>
+                <li><a href="#" class="active"><img src="../resources/navbar/user.png" alt="">Пользователи</a></li>  
             </ul>
         </nav>
         
@@ -25,18 +25,22 @@
     <main>
         <div class="flexscroll-box">
             <div class="filter-box">
-                <ul class="filter-box-item">
-                    <li>
-                        <label for="search-input">Поиск</label><input type="text" id="search-input" placeholder="Имя, фамилия...">
-                    </li>
-                    <li><label for="role-select">Роль</label>
-                        <select id="role-select">
+                <table class="filter-box-table">
+                    <tr>
+                        <td><label for="search-input">Поиск</label></td>
+                        <td><input type="text" id="search-input" placeholder="Имя, фамилия..."></td>
+                    </tr>
+                    <tr>
+                        <td><label for="role-select">Роль</label></td>
+                        <td>
+                            <select>
                             <option value=""></option>
                             <option value="reader">Читатель</option>
                             <option value="admin">Администратор</option>
                         </select>
-                    </li>
-                </ul>
+                        </td>
+                    </tr>
+                </table>
             </div>
         <div class="scroll-box">
             <div class="scroll-box-item">

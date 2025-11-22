@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('form').forEach(form => {
         const box = form.querySelector('.auth-box');
-        if (form.style.display === 'none') return; // не показываем скрытые формы
+        if (form.style.display === 'none') return;
         setTimeout(() => {
             box.classList.add('show');
         }, 50);
