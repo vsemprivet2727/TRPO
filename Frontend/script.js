@@ -1,3 +1,5 @@
+//import { disconnect } from "mongoose";
+
 const API_URL = 'http://localhost:3000/api';
 
 
@@ -36,9 +38,11 @@ function displayBooks(books) {
         const bookItem = document.createElement('ul');
         bookItem.className = 'scroll-box-item book-card';
         bookItem.innerHTML = `
-            <li>
-            <span class="item-label">${book.title}</span>
-            <small>${book.author}</small>
+            <li style= "display: flex; flex-direction: row; justify-content: space-between;">
+            <div style="display: flex; flex-direction: column; text-align: left;">
+            <span style="font-weight: bold;">${book.title}</span>
+            <small align="left">${book.author}</small>
+            </div>
             <img src="../resources/Book open.png" alt="Книга">
             </li>
 
@@ -236,11 +240,34 @@ async function loadUsers() {
     }
 }
 
+function tabClicked(){
+    const tabFilters = document.getElementById("tab-filters");
+    const tabAddBook = document.getElementById("tab-add-book");
+
+    if (tabFilters) {
+        tabFilters.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.getElementById("filters").style.display = "flex";
+            document.getElementById("add-book").style.display = "none";
+            tabFilters.classList.add('active');
+            tabAddBook.classList.remove('active');
+        });
+    }
+
+    if (tabAddBook) {
+        tabAddBook.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.getElementById("add-book").style.display = "flex";
+            document.getElementById("filters").style.display = "none";
+            tabAddBook.classList.add('active');
+            tabFilters.classList.remove('active');
+        });
+    }
+}
 
 
-// --------------------------------------------
+
 // DOMContentLoaded
-// --------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
 
     // Если на странице книг (Main.html)
@@ -248,6 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
         populateFilters();
         loadBooks();
         initModal();
+        tabClicked();
     }
 
     // Если на странице пользователей (Users.html или ReturnBooks.html)

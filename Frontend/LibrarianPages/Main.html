@@ -24,8 +24,12 @@
     
     <main>
         <div class="flexscroll-box">
-            <div class="flex-row">
-            <div class="filter-box">
+            <div class="flex-column">
+            <div class="tabs">
+                <div class="tabs-row active" id="tab-filters"><a><span>Фильтры</span><img src="../resources/tabs/filter.png" alt=""></a></div>
+                <div class="tabs-row" id="tab-add-book"><a><span>Добавить</span><img src="../resources/tabs/add-book.png" alt=""></a></div>
+            </div>
+            <div class="filter-box" id="filters" style="display: flex;">
                 <table class="filter-box-table">
                     <tr>
                         <td><label for="checkbox-is-we-have">В наличии</label></td>
@@ -63,7 +67,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="filter-box">
+            <div class="filter-box" id="add-book">
                 <h3 align="center">Добавить книгу</h1>
                     <table class="filter-box-table">
                         <tr>
@@ -95,7 +99,6 @@
             </div>
         </div>
 
-        </div>
         </div>
         <div id="bookModal" class="modal">
         <div class="modal-content">
