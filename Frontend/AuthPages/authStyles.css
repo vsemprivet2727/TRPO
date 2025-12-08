@@ -6,7 +6,7 @@
     flex-direction: column;
     gap: 20px;
     width: min(70vh, 600px); 
-    height: auto;
+    height: fit-content;
     border-radius: 50px;
     opacity: 0;
     transform: translateY(50px) scale(0.95);
@@ -44,9 +44,11 @@
 }
 
 form {
-    position:absolute;
+    padding: 15vh;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width:100%;
-    top:0;
-    left:0;
-    background: linear-gradient(to top, #E8E8E8, #ffcf88);
+    background: none;
 }
