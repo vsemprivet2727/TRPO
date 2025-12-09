@@ -122,7 +122,6 @@ function setupBookClicks() {
         });
     });
 }
-
 // ФИЛЬТРАЦИЯ
 
 // Элементы фильтров
@@ -282,12 +281,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Если на странице пользователей (Users.html или ReturnBooks.html)
     if (document.getElementById("users-scroll-box")) {
         loadUsers();
-    }
-
-        if (window.location.pathname.includes("Books.html")) {
-        populateFilters();
-        loadBooks();
-        initModal();
     }
 });
 
