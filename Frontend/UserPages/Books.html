@@ -11,8 +11,8 @@
         
         <nav class="nav">
             <ul class="nav-list">
-                <li><a href="#" class="active">Книг в библиотеке</a></li>
-                <li><a href="UsersBooks.html">Книги у Вас</a></li>
+                <li><a href="#" class="active"><img src="../resources/navbar/open-book.png" alt="">Книг в библиотеке</a></li>
+                <li><a href="UsersBooks.html"><img src="../resources/navbar/user.png" alt="">Книги у Вас</a></li>
             </ul>
         </nav>
         
@@ -23,36 +23,48 @@
     
     <main>
         <div class="flexscroll-box">
-            <div class="filter-box" style="display: flex;">
-                <ul class="filter-box-item">
-                    <li><input type="checkbox" name="is-we-have" id="checkbox-is-we-have"><label for="checkbox-is-we-have"> Есть в наличии</label></li>
-                    <li><label for="genre-select" >Жанр</label>
-                        <select id="genre-select">
-                            <!-- Ну тут с бд подгрузка короче-->
-                        </select>
-                    </li>
-                    <li><label for="publisher-select">Издатель</label>
-                        <select id="publisher-select">
-                            <!-- Ну тут с бд подгрузка короче-->
-                        </select>
-                    </li>
-                    <li>
-                        <label for="author-select">Автор</label>
-                        <select id="author-select">
-                            <!-- Ну тут с бд подгрузка короче-->
-                        </select>
-                    </li>
-                    <li>
-                        <label for="input-year">Год</label>
-                        <input type="text" name="input-year" id="input-year" placeholder="">
-                    </li>
-                </ul>
+      <div class="filter-box" id="filters" style="display: flex;">
+                <table class="filter-box-table">
+                    <tr>
+                        <td><label for="checkbox-is-we-have">В наличии</label></td>
+                        <td>
+                            <input type="checkbox" name="is-we-have" id="checkbox-is-we-have">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="genre-select" >Жанр</label></td>
+                        <td>
+                             <select id="genre-select">
+                                <!-- с бд подгрузка-->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="publisher-select">Издатель</label></td>
+                        <td>
+                            <select id="publisher-select">
+                                <!-- с бд подгрузка-->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="author-select">Автор</label></td>
+                        <td>
+                            <select id="author-select">
+                                <!-- с бд подгрузка-->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="input-year">Год</label></td>
+                        <td><input type="text" name="input-year" id="input-year" placeholder=""></td>
+                    </tr>
+                </table>
             </div>
         <div class="scroll-box" id="books-scroll-box">
             <div class="scroll-box-item">
             </div>
         </div>
-
         </div>
     <div id="bookModal" class="modal">
         <div class="modal-content">
