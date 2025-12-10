@@ -240,11 +240,12 @@ async function loadUsers() {
 }
 
 function tabClicked(){
-    const tabFilters = document.getElementById("tab-filters");
-    const tabAddBook = document.getElementById("tab-add-book");
+    if (window.location.pathname.includes("Main.html")) {
+        const tabFilters = document.getElementById("tab-filters");
+        const tabAddBook = document.getElementById("tab-add-book");
 
-    if (tabFilters) {
-        tabFilters.addEventListener("click", (e) => {
+        if (tabFilters) {
+            tabFilters.addEventListener("click", (e) => {
             e.preventDefault();
             document.getElementById("filters").style.display = "flex";
             document.getElementById("add-book").style.display = "none";
@@ -261,22 +262,42 @@ function tabClicked(){
             tabAddBook.classList.add('active');
             tabFilters.classList.remove('active');
         });
+
+    }}
+    if(window.location.pathname.includes("Users.html")) {
+        const tabAdd = document.getElementById('tab-add');
+        const tabRemove = document.getElementById('tab-remove');
+
+        if(tabRemove) {
+            tabRemove.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('button-add').style.display = 'none';
+                document.getElementById('button-remove').style.display = 'flex';
+                tabRemove.classList.add('active');
+                tabAdd.classList.remove('active');
+            });
+        if(tabAdd) {
+                tabAdd.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('button-add').style.display = 'flex';
+                document.getElementById('button-remove').style.display = 'none';
+                tabAdd.classList.add('active');
+                tabRemove.classList.remove('active');
+            });
+        }
     }
 }
-
-
-
-
+}
 
 // DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
 
+    tabClicked();
     // Если на странице книг (Main.html)
     if (window.location.pathname.includes("Main.html")) {
         populateFilters();
         loadBooks();
         initModal();
-        tabClicked();
     }
 
     // Если на странице пользователей (Users.html или ReturnBooks.html)
@@ -290,4 +311,3 @@ document.addEventListener("DOMContentLoaded", () => {
         initModal();
     }
 });
-
