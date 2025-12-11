@@ -200,7 +200,8 @@ main {
     display: none;
     flex-direction: column;
     list-style: none;
-    width: 400px;
+    width: 40wh;
+    max-width: 400px;
     height:fit-content;
     min-height: 30vh;
     background-color: #ffffff;
@@ -461,4 +462,50 @@ main {
 
 .tabs:hover {
     max-width: 400px;
+}
+
+@media (max-width: 500px) {
+    body {
+        overflow-y: scroll;
+    }
+    .nav {
+        display: flex;
+        align-items: start;
+    }
+
+    .btn-login {
+        display: none;
+    }
+
+    .btn-option {
+        width: 30px;
+        height: 30px;
+    }
+
+    .flexscroll-box {
+        flex-direction: column-reverse;
+        margin: 30px;
+        padding-bottom: 5vw;
+        height: auto;
+    }
+    .scroll-box {
+        width: 100%;
+        border-radius: 0px;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
+    }
+    .filter-box {
+        width: 100%;
+        border-radius: 0px;
+        border-bottom-left-radius: 30px;
+        border-bottom-right-radius: 30px;
+    }
+    .tabs {
+        width: 100%;
+        max-width: none;
+        border-radius: 0px;
+    }
+    .tabs:hover {
+        max-width: none;
+    }
 }
