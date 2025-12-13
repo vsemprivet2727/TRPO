@@ -336,14 +336,17 @@ function tabClicked(){
     if (window.location.pathname.includes("Main.html")) {
         const tabFilters = document.getElementById("tab-filters");
         const tabAddBook = document.getElementById("tab-add-book");
+        const tabRemoveBook = document.getElementById("tab-remove-book");
 
         if (tabFilters) {
-            tabFilters.addEventListener("click", (e) => {
+        tabFilters.addEventListener("click", (e) => {
             e.preventDefault();
             document.getElementById("filters").style.display = "flex";
             document.getElementById("add-book").style.display = "none";
+            document.getElementById('remove-book').style.display = 'none';
             tabFilters.classList.add('active');
             tabAddBook.classList.remove('active');
+            tabRemoveBook.classList.remove('active');
         });
     }
 
@@ -352,11 +355,25 @@ function tabClicked(){
             e.preventDefault();
             document.getElementById("add-book").style.display = "flex";
             document.getElementById("filters").style.display = "none";
+            document.getElementById('remove-book').style.display = 'none'
             tabAddBook.classList.add('active');
             tabFilters.classList.remove('active');
+            tabRemoveBook.classList.remove('active');
         });
+    }
 
-    }}
+    if (tabRemoveBook) {
+        tabRemoveBook.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.getElementById("remove-book").style.display = "flex";
+            document.getElementById("add-book").style.display = "none";
+            document.getElementById("filters").style.display = "none";
+            tabRemoveBook.classList.add('active');
+            tabFilters.classList.remove('active');
+            tabAddBook.classList.remove('active');
+    });
+    }
+}
     if(window.location.pathname.includes("Users.html")) {
         const tabAdd = document.getElementById('tab-add');
         const tabRemove = document.getElementById('tab-remove');
