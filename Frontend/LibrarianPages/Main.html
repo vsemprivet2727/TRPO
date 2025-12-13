@@ -28,6 +28,7 @@
             <div class="tabs nav-list" style="justify-content: left;">
                 <a id="tab-filters" class="active"><img src="../resources/tabs/filter.png" alt="">Фильтры</a>
                 <a id="tab-add-book"><img src="../resources/tabs/add-book.png" alt="">Добавить</a>
+                <a id="tab-remove-book"><img src="../resources/tabs/remove-book.png" alt="">Удалить</a>
             </div>
             <div class="filter-box" id="filters" style="display: flex;">
                 <table class="filter-box-table">
@@ -92,13 +93,25 @@
                         </tr>
                     </table>
                     <button class="btn btn-primary" id="add-new-book">Добавить</button>
-                </div>
+                                </div>
+                        <div class="filter-box" id="remove-book">
+            <table class="filter-box-table">
+            <tr>
+                <td><label for="select-for-remove">Книга</label></td>
+                <td>
+                    <select name="" id="select-for-remove">
+                        <!-- Книги с бд-->
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <button class="btn btn-primary">Удалить</button>
+        </div>
                 </div>
         <div class="scroll-box" id="books-scroll-box">
             <div class="scroll-box-item">
             </div>
         </div>
-
         </div>
     <div id="bookModal" class="modal">
         <div class="modal-content">
