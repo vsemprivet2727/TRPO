@@ -160,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!value) {
                 allFieldsValid = false;
                 
-                // Находим русское название для сообщения об ошибке
                 const labelElement = document.querySelector(`label[for="${id}"]`);
                 missingFieldName = labelElement ? labelElement.textContent : id; 
                 break; // Останавливаем проверку при первой же ошибке
@@ -173,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 2. Подготовка данных для сервера
+        // Подготовка данных для сервера
         // Превращаем строку жанров в массив
         const genreArray = genresValue.split(/\s+/).filter(g => g !== ""); // Использование regex для обработки нескольких пробелов
 
@@ -186,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             inStock: true 
         };
 
-        // 3. Отправка на сервер (без изменений)
+        // Отправка на сервер
         try {
             // Указываем полный адрес, где действительно находится API
             const response = await fetch("http://localhost:3000/api/books", { 
