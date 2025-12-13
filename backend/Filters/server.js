@@ -9,10 +9,46 @@ import cors from 'cors';
 const app = express();
 
 app.use(cors()); // разрешает все источники
+app.use(express.json());
+app.use(express.static('public'));
 
 mongoose.connect("mongodb://localhost:27017/trpo")
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
+
+app.post("/api/books", async (req, res) => {
+  try {
+    // Получаем данные, которые пришли с фронтенда
+    const { 
+      title, author, publishDate, publisher, 
+      genre, pages, isbn, language, inStock 
+    } = req.body;
+
+    // Создаем новый документ на основе Модели
+    const newBook = new Book({
+      title,
+      author,
+      publishDate,
+      publisher,
+      // Если жанр приходит строкой, превращаем в массив (т.к. в схеме [String])
+      genre: Array.isArray(genre) ? genre : [genre], 
+      pages,
+      isbn,
+      language,
+      inStock
+    });
+
+    // Сохраняем в базу данных
+    const savedBook = await newBook.save();
+
+    // Отправляем ответ клиенту, что все прошло успешно
+    res.status(201).json({ message: "Книга успешно добавлена!", book: savedBook });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при сохранении", error });
+  }
+});
 
 app.get("/api/books", async (req, res) => {
     try {

@@ -123,6 +123,99 @@ function setupBookClicks() {
     });
 }
 
+//Добавление книги в бд
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const addButton = document.getElementById('add-new-book');
+    const formElementIds = [ // Список ID всех обязательных полей
+        'new-book-name',
+        'new-book-author',
+        'new-book-publisher',
+        'new-book-year',
+        'new-book-genres'
+    ];
+
+    addButton.addEventListener('click', async () => {
+        
+        const titleValue = document.getElementById('new-book-name').value.trim();
+        const authorValue = document.getElementById('new-book-author').value.trim();
+        const publisherValue = document.getElementById('new-book-publisher').value.trim();
+        const yearValue = document.getElementById('new-book-year').value.trim();
+        const genresValue = document.getElementById('new-book-genres').value.trim();
+        
+        // Проверка на пустые поля
+        const requiredFields = {
+            'new-book-name': titleValue,
+            'new-book-author': authorValue,
+            'new-book-publisher': publisherValue,
+            'new-book-year': yearValue,
+            'new-book-genres': genresValue
+        };
+        
+        let allFieldsValid = true;
+        let missingFieldName = '';
+
+        // Перебираем все обязательные поля и проверяем, что они не пустые
+        for (const [id, value] of Object.entries(requiredFields)) {
+            if (!value) {
+                allFieldsValid = false;
+                
+                // Находим русское название для сообщения об ошибке
+                const labelElement = document.querySelector(`label[for="${id}"]`);
+                missingFieldName = labelElement ? labelElement.textContent : id; 
+                break; // Останавливаем проверку при первой же ошибке
+            }
+        }
+
+        if (!allFieldsValid) {
+            alert(`Ошибка сохранения: Поле "${missingFieldName}" должно быть заполнено.`);
+            // Не допускаем отправку запроса
+            return;
+        }
+
+        // 2. Подготовка данных для сервера
+        // Превращаем строку жанров в массив
+        const genreArray = genresValue.split(/\s+/).filter(g => g !== ""); // Использование regex для обработки нескольких пробелов
+
+        const bookData = {
+            title: titleValue,
+            author: authorValue,
+            publisher: publisherValue,
+            publishDate: yearValue, 
+            genre: genreArray,
+            inStock: true 
+        };
+
+        // 3. Отправка на сервер (без изменений)
+        try {
+            // Указываем полный адрес, где действительно находится API
+            const response = await fetch("http://localhost:3000/api/books", { 
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json"
+                },
+                body: JSON.stringify(bookData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert("Книга добавлена!");
+                
+                // Очистить поля ввода после успеха
+                formElementIds.forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+            } else {
+                alert("Ошибка при добавлении");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Ошибка сети");
+        }
+    });
+});
+
+
 // ФИЛЬТРАЦИЯ
 
 // Элементы фильтров
