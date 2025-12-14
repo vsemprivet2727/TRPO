@@ -79,14 +79,14 @@ main {
 }
 
 .nav-list a.active {
-    max-width: 180px;
+    max-width: 250px;
     opacity: 1;
     background-color: #ffffff;
 }
 
 .nav-list a:hover,
 .nav-list a:focus-visible {
-    max-width: 180px;
+    max-width: 250px;
     opacity: 0.9;
     color: #007bff;
     cursor: pointer;
