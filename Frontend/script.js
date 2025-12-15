@@ -486,6 +486,10 @@ function tabClicked(){
 }
 }
 
+async function expandMenu() {
+    //!!!!!!!
+}
+
 async function clearFilters() {
     params = new URLSearchParams();
     loadBooks();
