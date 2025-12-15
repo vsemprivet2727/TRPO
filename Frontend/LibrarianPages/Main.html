@@ -18,7 +18,7 @@
         </nav>
         
         <div class="header-buttons">
-            <button class="btn btn-login"><img src="../resources/User.png" alt="Войти"></button>
+            <a href="../AuthPages/Auth.html" class="btn-login"><img src="../resources/User.png" alt="Войти">Профиль</a>
         </div>
     </header>
     
@@ -67,6 +67,7 @@
                         <td><input type="text" name="input-year" id="input-year" placeholder=""></td>
                     </tr>
                 </table>
+                <button class="btn btn-primary" type="reset">Сбросить</button>
             </div>
             <div class="filter-box" id="add-book">
                 <h3 align="center">Добавить книгу</h1>
@@ -91,7 +92,17 @@
                             <td><label for="new-book-year">Год выпуска</label></td>
                             <td><input type="text" id="new-book-year"></td>
                         </tr>
+                        <tr>
+                            <td>В наличии</td>
+                            <td>
+                                <select name="" id="select-is-we-have">
+                                    <option value="true">Да</option>
+                                    <option value="false">Нет</option>
+                                </select>
+                            </td>
+                        </tr>
                     </table>
+                    
                     <button class="btn btn-primary" id="add-new-book">Добавить</button>
                                 </div>
                         <div class="filter-box" id="remove-book">

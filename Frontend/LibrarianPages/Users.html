@@ -18,7 +18,7 @@
         </nav>
         
         <div class="header-buttons">
-            <button class="btn btn-login"><img src="../resources/User.png" alt="Войти"></button>
+            <a href="../AuthPages/Auth.html"><button class="btn btn-login"><img src="../resources/User.png" alt="Войти"></button></a>        
         </div>
     </header>
     
@@ -40,35 +40,55 @@
                         <td><input type="text" name="" id="search-input-email" placeholder="example@mail.com"></td>
                     </tr>
                     <tr>
-                        <td><label for="role-select">Роль</label></td>
-                        <td>
-                            <select>
-                            <option value=""></option>
-                            <option value="reader">Читатель</option>
-                            <option value="admin">Администратор</option>
-                        </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="book-name">Искомая книга</label></td>
+                        <td><label for="book-name">Книга</label></td>
                         <td>
                             <select name="" id="">
                                 <!-- с бд подгрузка-->
                             </select>
                         </td>
                     </tr>
+                    <tr>
+                        <td><label for="input-date-start">От</label></td>
+                        <td><input type="date" name="" id="input-date-start"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="input-date-end">До</label></td>
+                        <td><input type="date" id="input-date-end"></td>
+                    </tr>
                 </table>
                 <button class="btn btn-primary" id="button-add">Добавить</button>
-                <button class="btn btn-primary" id="button-remove" style="display:none;">Удалить</button>
             </div>
 
             <div class="filter-box">
+            <div class="filter-box" style="display: flex;">
                 <table class="filter-box-table">
                     <tr>
-                        <td></td>
-                        <td></td>
+                        <td><label for="search-input">Поиск</label></td>
+                        <td><input type="text" id="search-input-name" placeholder="Имя, фамилия..."></td>
+                    </tr>
+                    <tr>
+                        <td><label for="search-input-email">Почта</label></td>
+                        <td><input type="text" name="" id="search-input-email" placeholder="example@mail.com"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="book-name">Книга</label></td>
+                        <td>
+                            <select name="" id="">
+                                <!-- с бд подгрузка-->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="input-date-start">От</label></td>
+                        <td><input type="date" name="" id="input-date-start"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="input-date-end">До</label></td>
+                        <td><input type="date" id="input-date-end"></td>
                     </tr>
                 </table>
+                <button class="btn btn-primary" id="button-add">Добавить</button>
+            </div>
             </div>
             </div>
         <div class="scroll-box" id="users-scroll-box">
