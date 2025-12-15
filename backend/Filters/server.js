@@ -16,6 +16,27 @@ mongoose.connect("mongodb://localhost:27017/trpo")
   .then(() => console.log("Connected to MongoDB"))
   .catch(err => console.error("MongoDB connection error:", err));
 
+app.delete("/api/books/:id", async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    
+    const deletedBook = await Book.findByIdAndDelete(bookId);
+
+    if (!deletedBook) {
+      return res.status(404).json({ message: "Книга с указанным ID не найдена." });
+    }
+
+    res.status(200).json({ 
+        message: "Книга успешно удалена", 
+        deletedBookId: bookId 
+    });
+
+  } catch (error) {
+    console.error("Ошибка при удалении книги:", error);
+    res.status(500).json({ message: "Ошибка сервера при удалении", error: error.message });
+  }
+});
+  
 app.post("/api/books", async (req, res) => {
   try {
     // Получаем данные, которые пришли с фронтенда

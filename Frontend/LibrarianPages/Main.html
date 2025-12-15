@@ -91,22 +91,36 @@
                             <td><label for="new-book-year">Год выпуска</label></td>
                             <td><input type="text" id="new-book-year"></td>
                         </tr>
+                        <tr>
+                            <td><label for="new-book-inStock">В наличии</label></td>
+                            <td>
+                                <select id="new-book-inStock">
+                                    <option value="" selected>Выберите</option>
+                                    <option value="true">Да</option>
+                                    <option value="false">Нет</option>
+                                </select>
+                            </td>
+                        </tr>
                     </table>
                     <button class="btn btn-primary" id="add-new-book">Добавить</button>
                                 </div>
                         <div class="filter-box" id="remove-book">
-            <table class="filter-box-table">
-            <tr>
-                <td><label for="select-for-remove">Книга</label></td>
-                <td>
-                    <select name="" id="select-for-remove">
-                        <!-- Книги с бд-->
-                    </select>
-                </td>
-            </tr>
-        </table>
-        <button class="btn btn-primary">Удалить</button>
-        </div>
+                            <h3 align="center">Удалить книгу</h3> 
+                            <table class="filter-box-table">
+                            <tr>
+                                <td><label for="select-for-remove">Книга</label></td>
+                                <td>
+                                    <select id="select-for-remove">
+                                    <option value="">Выберите книгу</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            </table>
+                            
+                            <button class="btn btn-primary" id="remove-book-btn">Удалить</button>
+                            
+                            <div id="remove-message" style="margin-top: 10px;"></div> 
+                        </div>
                 </div>
         <div class="scroll-box" id="books-scroll-box">
             <div class="scroll-box-item">
