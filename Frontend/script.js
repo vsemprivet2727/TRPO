@@ -124,15 +124,19 @@ function setupBookClicks() {
 }
 
 //Добавление книги в бд
+//Удаление книги из бд
 document.addEventListener('DOMContentLoaded', () => {
     
+    //Добавление книги в бд
+
     const addButton = document.getElementById('add-new-book');
     const formElementIds = [ // Список ID всех обязательных полей
         'new-book-name',
         'new-book-author',
         'new-book-publisher',
         'new-book-year',
-        'new-book-genres'
+        'new-book-genres',
+        'new-book-inStock'
     ];
 
     addButton.addEventListener('click', async () => {
@@ -142,14 +146,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const publisherValue = document.getElementById('new-book-publisher').value.trim();
         const yearValue = document.getElementById('new-book-year').value.trim();
         const genresValue = document.getElementById('new-book-genres').value.trim();
-        
+        const inStockValue = document.getElementById('new-book-inStock').value; 
+
         // Проверка на пустые поля
         const requiredFields = {
             'new-book-name': titleValue,
             'new-book-author': authorValue,
             'new-book-publisher': publisherValue,
             'new-book-year': yearValue,
-            'new-book-genres': genresValue
+            'new-book-genres': genresValue,
+            'new-book-inStock': inStockValue
         };
         
         let allFieldsValid = true;
@@ -174,15 +180,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Подготовка данных для сервера
         // Превращаем строку жанров в массив
-        const genreArray = genresValue.split(/\s+/).filter(g => g !== ""); // Использование regex для обработки нескольких пробелов
+        const genreArray = genresValue.split(/\s+/).filter(g => g !== "");
 
+        const inStockBoolean = (inStockValue === 'true');
+        
         const bookData = {
             title: titleValue,
             author: authorValue,
             publisher: publisherValue,
             publishDate: yearValue, 
             genre: genreArray,
-            inStock: true 
+            inStock: inStockBoolean
         };
 
         // Отправка на сервер
@@ -204,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formElementIds.forEach(id => {
                     document.getElementById(id).value = '';
                 });
+                document.getElementById('new-book-inStock').value = '';
             } else {
                 alert("Ошибка при добавлении");
             }
@@ -212,8 +221,87 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Ошибка сети");
         }
     });
-});
 
+    //////////////////////
+    //Удаление книги из бд
+    //////////////////////
+    
+    const removeSelect = document.getElementById('select-for-remove');
+    const removeButton = document.getElementById('remove-book-btn');
+    const removeMessageDiv = document.getElementById('remove-message');
+
+    //Загрузка книг в выпадающий список
+    async function loadBooksForRemoval() {
+        try {
+            const response = await fetch("http://localhost:3000/api/books");
+            if (!response.ok) {
+                throw new Error('Не удалось загрузить книги');
+            }
+            const books = await response.json();
+            
+            removeSelect.innerHTML = '<option value="">Выберите книгу</option>';
+
+            // Добавляем каждую книгу как опцию
+            books.forEach(book => {
+                const option = document.createElement('option');
+                option.value = book._id; // в value храним ID книги
+                option.textContent = `${book.title} (${book.author})`;
+                removeSelect.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error("Ошибка загрузки книг:", error);
+            removeMessageDiv.textContent = 'Ошибка загрузки списка книг.';
+            removeMessageDiv.style.color = 'red';
+        }
+    }
+
+    // Запуск загрузки книг при старте
+    loadBooksForRemoval();
+
+    // Обработчик кнопки "Удалить"
+    removeButton.addEventListener('click', async () => {
+        const bookId = removeSelect.value;
+        removeMessageDiv.textContent = '';
+
+        if (!bookId) {
+            removeMessageDiv.textContent = 'Пожалуйста, выберите книгу для удаления.';
+            removeMessageDiv.style.color = 'orange';
+            return;
+        }
+
+        const confirmation = confirm(`Вы уверены, что хотите удалить книгу?`);
+        if (!confirmation) {
+            return;
+        }
+        
+        try {
+            // Отправка DELETE-запрос, используя ID в URL
+            const response = await fetch(`http://localhost:3000/api/books/${bookId}`, {
+                method: "DELETE" 
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                removeMessageDiv.textContent = `Успешно: ${result.message}`;
+                removeMessageDiv.style.color = 'green';
+                
+                // Перезагрузка списка, чтобы удаленная книга исчезла
+                loadBooksForRemoval(); 
+
+            } else {
+                const errorData = await response.json();
+                removeMessageDiv.textContent = `Ошибка: ${errorData.message || response.statusText}`;
+                removeMessageDiv.style.color = 'red';
+            }
+
+        } catch (error) {
+            console.error("Ошибка сети:", error);
+            removeMessageDiv.textContent = 'Ошибка сети. Проверьте запуск сервера.';
+            removeMessageDiv.style.color = 'red';
+        }
+    });
+});
 
 // ФИЛЬТРАЦИЯ
 
