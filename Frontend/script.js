@@ -486,6 +486,11 @@ function tabClicked(){
 }
 }
 
+async function clearFilters() {
+    params = new URLSearchParams();
+    loadBooks();
+}
+
 // DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
 

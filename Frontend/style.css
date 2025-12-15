@@ -243,7 +243,7 @@ main {
 .filter-box-table {
     margin: 20px 5px;
     table-layout: fixed;
-    font-size: 14pt;
+    font-size: 12pt;
 }
 
 .filter-box-table td {
