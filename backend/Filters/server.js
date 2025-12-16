@@ -73,9 +73,10 @@ app.post("/api/books", async (req, res) => {
 
 app.get("/api/books", async (req, res) => {
     try {
-    const { author, publisher, year, inStock } = req.query;
+    const { author, publisher, year, inStock, genre } = req.query;
     const filter = {};
 
+    if (genre ) filter.genre = { $in: [genre] };
     if (author) filter.author = new RegExp(author, "i");
     if (publisher) filter.publisher = new RegExp(publisher, "i");
 

@@ -301,6 +301,36 @@ document.addEventListener('DOMContentLoaded', () => {
             removeMessageDiv.style.color = 'red';
         }
     });
+
+    const resetFiltersButton = document.getElementById('reset-filters-btn');
+
+    // ID элементов фильтрации, которые нужно сбросить
+    const filterIds = [
+        'checkbox-is-we-have',
+        'genre-select',
+        'publisher-select',
+        'author-select',
+        'input-year'
+    ];
+    // Сброс фильтров
+    if (resetFiltersButton) {
+        resetFiltersButton.addEventListener('click', () => {
+        
+            filterIds.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) return;
+
+                if (element.type === 'checkbox') {
+                element.checked = false;
+                } else { 
+                    element.value = ''; 
+                }
+            });
+        
+            applyFilters(); 
+            console.log("Фильтры сброшены.");
+        });
+    }
 });
 
 // ФИЛЬТРАЦИЯ
@@ -497,7 +527,7 @@ async function expandMenu() {
 }
 
 async function clearFilters() {
-    params = new URLSearchParams();
+    //params = new URLSearchParams();
     loadBooks();
 }
 
