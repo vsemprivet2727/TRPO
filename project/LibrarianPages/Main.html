@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Библиотека</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../../styles/style.css">
 </head>
 <body>
     <header class="header">
@@ -18,8 +18,27 @@
         </nav>
         
         <div class="header-buttons">
-            <a href="../AuthPages/Auth.html" class="btn-login"><img src="../resources/User.png" alt="Войти">Профиль</a>
+            <a href="../Auth.html" class="btn-login"><img src="../resources/User.png" alt="Войти">Профиль</a>
             <button onclick="expandMenu()" class="drop-menu"><img src="../resources/navbar/report.png" alt=""></button>
+            <div class="expanded-menu" id="expanded-menu">
+                <!-- Тут отчет и его экспорт -->
+                 <table class="filter-box-table">
+                    <h1>Месячный отчет</h1>
+                    <tr>
+                        <td>Количество новых читателей</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Книг взято</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Количество продлений</td>
+                        <td></td>
+                    </tr>
+                 </table>
+                 <button class="btn btn-primary">Сохранить</button>
+            </div>
         </div>
     </header>
     
@@ -146,6 +165,6 @@
     </div>
     </main>
 
-    <script src="../script.js"></script>
+    <script src="../../scripts/script.js"></script>
 </body>
 </html>

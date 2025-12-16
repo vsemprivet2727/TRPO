@@ -488,6 +488,12 @@ function tabClicked(){
 
 async function expandMenu() {
     //!!!!!!!
+    const menu = document.getElementById('expanded-menu');
+    if (menu.classList.contains('active')) {
+        menu.classList.remove('active');
+    } else {
+        menu.classList.add('active');
+    }
 }
 
 async function clearFilters() {
