@@ -436,7 +436,15 @@ async function loadUsers() {
             userItem.innerHTML = `
                 <li>
                     <strong>${user.username}</strong> (${user.email})<br>
-                    Взятые книги: ${user.borrowedBooks.map(b => b.bookId.title + " (до " + new Date(b.returnDate).toLocaleDateString() + ")").join("<br>")}
+                    Взятые книги: ${
+                user.borrowedBooks && user.borrowedBooks.length > 0 
+                ? user.borrowedBooks.map(b => 
+                    b.bookId 
+                        ? b.bookId.title + " (до " + new Date(b.returnDate).toLocaleDateString() + ")"
+                        : "Книга удалена или не найдена"
+                ).join("<br>")
+                : "Книг нет"
+        }
                 </li>
             `;
 
@@ -524,11 +532,6 @@ async function expandMenu() {
     } else {
         menu.classList.add('active');
     }
-}
-
-async function clearFilters() {
-    //params = new URLSearchParams();
-    loadBooks();
 }
 
 // DOMContentLoaded

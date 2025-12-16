@@ -20,15 +20,21 @@ app.delete("/api/books/:id", async (req, res) => {
   try {
     const bookId = req.params.id;
     
+    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+        return res.status(400).json({ message: "Некорректный формат ID книги." });
+    }
+    const bookObjectId = new mongoose.Types.ObjectId(bookId);
+
     const deletedBook = await Book.findByIdAndDelete(bookId);
 
     if (!deletedBook) {
-      return res.status(404).json({ message: "Книга с указанным ID не найдена." });
+        return res.status(404).json({ message: "Книга с указанным ID не найдена." });
     }
 
     await User.updateMany(
-        { "borrowedBooks.bookId": bookId },
-        { $pull: { borrowedBooks: { bookId: bookId } } }
+        { "borrowedBooks.bookId": bookObjectId },
+        { $pull: { borrowedBooks: { bookId: bookObjectId } } } 
+        //Все пользователи у которых была эта книга очищаются от "висячей ссылки".
     );
 
     res.status(200).json({ 
