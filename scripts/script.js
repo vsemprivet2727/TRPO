@@ -417,18 +417,48 @@ async function populateFilters() {
     }
 }
 
+
 async function loadUsers() {
-    const scrollBox = document.getElementById('users-scroll-box')
+    
+
+    const scrollBox = document.getElementById('users-scroll-box');
     scrollBox.innerHTML = `
         <div class="scroll-box-item">
             <h2>Список читателей</h2>
         </div>
     `;
      try {
-        const response = await fetch(`${API_URL}/users`);
+        const nameInputEl = document.getElementById('search-input-name');
+        const emailInputEl = document.getElementById('search-input-email');
+
+        const nameFilter = nameInputEl ? nameInputEl.value.trim() : '';
+        const emailFilter = emailInputEl ? emailInputEl.value.trim() : '';
+
+        console.log(`Фильтрация: Имя="${nameFilter}", Email="${emailFilter}"`);
+
+        const params = new URLSearchParams();
+        if (nameFilter) params.append('username', nameFilter);
+        if (emailFilter) params.append('email', emailFilter);
+
+        const queryString = params.toString();
+        const url = `${API_URL}/users${queryString ? '?' + queryString : ''}`;
+
+        console.log("Отправка запроса на:", url);
+
+        const response = await fetch(url);
+
         if (!response.ok) throw new Error('Ошибка загрузки пользователей');
 
         const users = await response.json();
+        scrollBox.innerHTML = `
+            <div class="scroll-box-item">
+                <h2>Список читателей</h2>
+            </div>
+        `;
+        if (users.length === 0) {
+            scrollBox.innerHTML += '<p style="padding:10px;">Пользователи не найдены</p>';
+            return;
+        }
 
         users.forEach(user => {
             const userItem = document.createElement('ul');
@@ -455,6 +485,7 @@ async function loadUsers() {
         console.error(err);
         scrollBox.innerHTML += '<p>Не удалось загрузить пользователей</p>';
     }
+
 }
 
 function tabClicked(){
@@ -547,6 +578,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Если на странице пользователей (Users.html или ReturnBooks.html)
     if (document.getElementById("users-scroll-box")) {
+        const nameInput = document.getElementById('search-input-name');
+        const emailInput = document.getElementById('search-input-email');
+
+        if (nameInput) {
+            nameInput.addEventListener('input', loadUsers);
+        }
+        if (emailInput) {
+            emailInput.addEventListener('input', loadUsers);
+        }
         loadUsers();
     }
 
