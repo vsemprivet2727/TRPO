@@ -436,7 +436,7 @@ async function loadUsers() {
             userItem.innerHTML = `
                 <li>
                     <strong>${user.username}</strong> (${user.email})<br>
-                    Взятые книги: ${user.borrowedBooks.map(b => b.bookId + " (до " + new Date(b.returnDate).toLocaleDateString() + ")").join(", ")}
+                    Взятые книги: ${user.borrowedBooks.map(b => b.bookId.title + " (до " + new Date(b.returnDate).toLocaleDateString() + ")").join("<br>")}
                 </li>
             `;
 

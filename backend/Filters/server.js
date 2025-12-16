@@ -26,6 +26,11 @@ app.delete("/api/books/:id", async (req, res) => {
       return res.status(404).json({ message: "Книга с указанным ID не найдена." });
     }
 
+    await User.updateMany(
+        { "borrowedBooks.bookId": bookId },
+        { $pull: { borrowedBooks: { bookId: bookId } } }
+    );
+
     res.status(200).json({ 
         message: "Книга успешно удалена", 
         deletedBookId: bookId 
@@ -51,7 +56,6 @@ app.post("/api/books", async (req, res) => {
       author,
       publishDate,
       publisher,
-      // Если жанр приходит строкой, превращаем в массив (т.к. в схеме [String])
       genre: Array.isArray(genre) ? genre : [genre], 
       pages,
       isbn,
@@ -97,7 +101,10 @@ app.get("/api/books", async (req, res) => {
 
 app.get("/api/users", async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().populate({
+        path: 'borrowedBooks.bookId',
+        select: 'title author'
+        });
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
