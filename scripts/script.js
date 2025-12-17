@@ -364,8 +364,29 @@ async function applyFilters() {
     const books = await response.json();
     displayBooks(books);
 }
+// Селектор книг у пользователей
+async function fillBookSelector(){
+    const bookSelect = document.getElementById("book-select")
 
+    if (!bookSelect) return;
+    try{
+        const response = await fetch(`${API_URL}/books`);
+        const books = await response.json();
 
+        bookSelect.innerHTML = '<option value="">Выберите книгу</option>';
+
+        books.forEach(book => {
+            const option = document.createElement("option");
+            option.value = book._id;
+            option.textContent = book.title;
+            bookSelect.appendChild(option);
+        });
+        console.log("Селектор книг успешно заполнен");
+    }
+    catch (err) {
+    console.error("Ошибка при подгрузке книг в селектор:", err);
+    }
+}
 // Наполнение селектов
 async function populateFilters() {
     try {
@@ -472,7 +493,7 @@ async function loadUsers() {
                     b.bookId 
                         ? b.bookId.title + " (до " + new Date(b.returnDate).toLocaleDateString() + ")"
                         : "Книга удалена или не найдена"
-                ).join("<br>")
+                ).join(", ")
                 : "Книг нет"
         }
                 </li>
@@ -588,6 +609,9 @@ document.addEventListener("DOMContentLoaded", () => {
             emailInput.addEventListener('input', loadUsers);
         }
         loadUsers();
+    }
+    if (window.location.pathname.includes("Users.html")) {
+        fillBookSelector();
     }
 
         if (window.location.pathname.includes("Books.html")) {
