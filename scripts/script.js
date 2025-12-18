@@ -341,6 +341,8 @@ const publisherSelect = document.getElementById("publisher-select");
 const genreSelect = document.getElementById("genre-select");
 const yearInput = document.getElementById("input-year");
 const inStockCheckbox = document.getElementById("checkbox-is-we-have");
+const langSelect = document.getElementById('select-lang');
+const inputPages = document.getElementById('input-pages');
 
 // Назначаем слушателя события
 if (authorSelect) authorSelect.addEventListener("change", applyFilters);
@@ -348,6 +350,8 @@ if (publisherSelect) publisherSelect.addEventListener("change", applyFilters);
 if (genreSelect) genreSelect.addEventListener("change", applyFilters);
 if (yearInput) yearInput.addEventListener("input", applyFilters);
 if (inStockCheckbox) inStockCheckbox.addEventListener("change", applyFilters);
+if (langSelect) langSelect.addEventListener('change', applyFilters);
+if (inputPages) inputPages.addEventListener('input', applyFilters);
 
 
 // Функция фильтрации
@@ -359,6 +363,8 @@ async function applyFilters() {
     if (genreSelect.value) params.append("genre", genreSelect.value);
     if (yearInput.value) params.append("year", yearInput.value);
     if (inStockCheckbox.checked) params.append("inStock", "true");
+    if (langSelect.value) params.append('language', langSelect.value);
+    if (inputPages.value) params.append('pages', inputPages.value);
 
     const response = await fetch(`${API_URL}/books?` + params.toString());
     const books = await response.json();
@@ -516,7 +522,7 @@ function tabClicked(){
 }
 }
 
-async function expandMenu() {
+/* async function expandMenu() {
     //!!!!!!!
     const menu = document.getElementById('expanded-menu');
     if (menu.classList.contains('active')) {
@@ -524,12 +530,7 @@ async function expandMenu() {
     } else {
         menu.classList.add('active');
     }
-}
-
-async function clearFilters() {
-    //params = new URLSearchParams();
-    loadBooks();
-}
+} */
 
 // DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
