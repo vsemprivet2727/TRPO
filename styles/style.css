@@ -269,7 +269,6 @@ main {
     flex-direction: column;
     list-style: none;
     width: 40wh;
-    max-width: 400px;
     height:fit-content;
     min-height: 30vh;
     background-color: #ffffff;
@@ -528,10 +527,6 @@ main {
     transition: all 0.3s ease-out;
 }
 
-.tabs:hover {
-    max-width: 400px;
-}
-
 @media (max-width: 500px) {
     body {
         overflow-y: scroll;
@@ -572,8 +567,5 @@ main {
         width: 100%;
         max-width: none;
         border-radius: 0px;
-    }
-    .tabs:hover {
-        max-width: none;
     }
 }

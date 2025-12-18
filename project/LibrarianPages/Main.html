@@ -19,9 +19,8 @@
         
         <div class="header-buttons">
             <a href="../Auth.html" class="btn-login"><img src="../resources/User.png" alt="Войти">Профиль</a>
-            <button onclick="expandMenu()" class="drop-menu"><img src="../resources/navbar/report.png" alt=""></button>
-            <div class="expanded-menu" id="expanded-menu">
-                <!-- Тут отчет и его экспорт -->
+        <!--<button onclick="expandMenu()" class="drop-menu"><img src="../resources/navbar/report.png" alt=""></button> -->
+        <!-- <div class="expanded-menu" id="expanded-menu">
                  <table class="filter-box-table">
                     <h1>Месячный отчет</h1>
                     <tr>
@@ -38,7 +37,7 @@
                     </tr>
                  </table>
                  <button class="btn btn-primary">Сохранить</button>
-            </div>
+            </div> -->
         </div>
     </header>
     
@@ -83,8 +82,20 @@
                         </td>
                     </tr>
                     <tr>
+                        <td><label for="select-lang">Язык</label></td>
+                        <td>
+                            <select name="" id="select-lang">
+                                <!-- с бд подгрузка-->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
                         <td><label for="input-year">Год</label></td>
                         <td><input type="text" name="input-year" id="input-year" placeholder=""></td>
+                    </tr>
+                    <tr>
+                        <td><label for="input-pages">Количество страниц</label></td>
+                        <td><input type="text" id="input-pages"></td>
                     </tr>
                 </table>
                 <button class="btn btn-primary" id="reset-filters-btn">Сбросить</button>
