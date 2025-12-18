@@ -20,11 +20,22 @@ app.delete("/api/books/:id", async (req, res) => {
   try {
     const bookId = req.params.id;
     
+    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+        return res.status(400).json({ message: "Некорректный формат ID книги." });
+    }
+    const bookObjectId = new mongoose.Types.ObjectId(bookId);
+
     const deletedBook = await Book.findByIdAndDelete(bookId);
 
     if (!deletedBook) {
-      return res.status(404).json({ message: "Книга с указанным ID не найдена." });
+        return res.status(404).json({ message: "Книга с указанным ID не найдена." });
     }
+
+    await User.updateMany(
+        { "borrowedBooks.bookId": bookObjectId },
+        { $pull: { borrowedBooks: { bookId: bookObjectId } } } 
+        //Все пользователи у которых была эта книга очищаются от "висячей ссылки".
+    );
 
     res.status(200).json({ 
         message: "Книга успешно удалена", 
@@ -51,7 +62,6 @@ app.post("/api/books", async (req, res) => {
       author,
       publishDate,
       publisher,
-      // Если жанр приходит строкой, превращаем в массив (т.к. в схеме [String])
       genre: Array.isArray(genre) ? genre : [genre], 
       pages,
       isbn,
@@ -97,10 +107,25 @@ app.get("/api/books", async (req, res) => {
 
 app.get("/api/users", async (req, res) => {
   try {
-    const users = await User.find();
+    const {username, email} = req.query;
+    const filter = {};
+
+    if (username) {
+        filter.username = { $regex: new RegExp(username, 'i') };
+    }
+    if (email) {
+        filter.email = { $regex: new RegExp(email, 'i') };
+    }
+
+    const users = await User.find(filter).populate({
+    path: 'borrowedBooks.bookId',
+    select: 'title author'
+    });
+
     res.json(users);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Ошибка при получении пользователей:", err);
+    res.status(500).json({ error: "Ошибка сервера при получении пользователей: " + err.message });
   }
 });
 

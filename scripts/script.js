@@ -370,8 +370,29 @@ async function applyFilters() {
     const books = await response.json();
     displayBooks(books);
 }
+// Селектор книг у пользователей
+async function fillBookSelector(){
+    const bookSelect = document.getElementById("book-select")
 
+    if (!bookSelect) return;
+    try{
+        const response = await fetch(`${API_URL}/books`);
+        const books = await response.json();
 
+        bookSelect.innerHTML = '<option value="">Выберите книгу</option>';
+
+        books.forEach(book => {
+            const option = document.createElement("option");
+            option.value = book._id;
+            option.textContent = book.title;
+            bookSelect.appendChild(option);
+        });
+        console.log("Селектор книг успешно заполнен");
+    }
+    catch (err) {
+    console.error("Ошибка при подгрузке книг в селектор:", err);
+    }
+}
 // Наполнение селектов
 async function populateFilters() {
     try {
@@ -423,18 +444,48 @@ async function populateFilters() {
     }
 }
 
+
 async function loadUsers() {
-    const scrollBox = document.getElementById('users-scroll-box')
+    
+
+    const scrollBox = document.getElementById('users-scroll-box');
     scrollBox.innerHTML = `
         <div class="scroll-box-item">
             <h2>Список читателей</h2>
         </div>
     `;
      try {
-        const response = await fetch(`${API_URL}/users`);
+        const nameInputEl = document.getElementById('search-input-name');
+        const emailInputEl = document.getElementById('search-input-email');
+
+        const nameFilter = nameInputEl ? nameInputEl.value.trim() : '';
+        const emailFilter = emailInputEl ? emailInputEl.value.trim() : '';
+
+        console.log(`Фильтрация: Имя="${nameFilter}", Email="${emailFilter}"`);
+
+        const params = new URLSearchParams();
+        if (nameFilter) params.append('username', nameFilter);
+        if (emailFilter) params.append('email', emailFilter);
+
+        const queryString = params.toString();
+        const url = `${API_URL}/users${queryString ? '?' + queryString : ''}`;
+
+        console.log("Отправка запроса на:", url);
+
+        const response = await fetch(url);
+
         if (!response.ok) throw new Error('Ошибка загрузки пользователей');
 
         const users = await response.json();
+        scrollBox.innerHTML = `
+            <div class="scroll-box-item">
+                <h2>Список читателей</h2>
+            </div>
+        `;
+        if (users.length === 0) {
+            scrollBox.innerHTML += '<p style="padding:10px;">Пользователи не найдены</p>';
+            return;
+        }
 
         users.forEach(user => {
             const userItem = document.createElement('ul');
@@ -442,7 +493,15 @@ async function loadUsers() {
             userItem.innerHTML = `
                 <li>
                     <strong>${user.username}</strong> (${user.email})<br>
-                    Взятые книги: ${user.borrowedBooks.map(b => b.bookId + " (до " + new Date(b.returnDate).toLocaleDateString() + ")").join(", ")}
+                    Взятые книги: ${
+                user.borrowedBooks && user.borrowedBooks.length > 0 
+                ? user.borrowedBooks.map(b => 
+                    b.bookId 
+                        ? b.bookId.title + " (до " + new Date(b.returnDate).toLocaleDateString() + ")"
+                        : "Книга удалена или не найдена"
+                ).join(", ")
+                : "Книг нет"
+        }
                 </li>
             `;
 
@@ -453,6 +512,7 @@ async function loadUsers() {
         console.error(err);
         scrollBox.innerHTML += '<p>Не удалось загрузить пользователей</p>';
     }
+
 }
 
 function tabClicked(){
@@ -530,7 +590,7 @@ function tabClicked(){
     } else {
         menu.classList.add('active');
     }
-} */
+}
 
 // DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
@@ -545,7 +605,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Если на странице пользователей (Users.html или ReturnBooks.html)
     if (document.getElementById("users-scroll-box")) {
+        const nameInput = document.getElementById('search-input-name');
+        const emailInput = document.getElementById('search-input-email');
+
+        if (nameInput) {
+            nameInput.addEventListener('input', loadUsers);
+        }
+        if (emailInput) {
+            emailInput.addEventListener('input', loadUsers);
+        }
         loadUsers();
+    }
+    if (window.location.pathname.includes("Users.html")) {
+        fillBookSelector();
     }
 
         if (window.location.pathname.includes("Books.html")) {
