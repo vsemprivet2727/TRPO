@@ -196,4 +196,26 @@ app.get("/api/user-books", async (req, res) => {
     }
 });
 
+app.post('/api/users/borrow', async (req, res) => {
+    const { userId, bookId, borrowedDate, returnDate } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "Пользователь не найден" });
+
+        // Добавляем объект в массив borrowedBooks
+        user.borrowedBooks.push({
+            bookId: bookId,
+            borrowedDate: borrowedDate,
+            returnDate: returnDate
+        });
+
+        await user.save();
+        
+        res.json({ message: "Данные обновлены" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 app.listen(3000, () => console.log("Server started on port 3000"));

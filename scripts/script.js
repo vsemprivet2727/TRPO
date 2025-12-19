@@ -491,6 +491,16 @@ async function loadUsers() {
         users.forEach(user => {
             const userItem = document.createElement('ul');
             userItem.className = 'scroll-box-item user-card';
+            userItem.style.cursor = 'pointer';
+
+            userItem.addEventListener('click', () => {
+                document.getElementById('selected-user-id').value = user._id;
+                document.getElementById('selected-user-name').textContent = `Выбран: ${user.username}`;
+        
+                document.querySelectorAll('.user-card').forEach(card => card.style.border = 'none');
+                userItem.style.border = '2px solid #007bff';
+            });
+            
             userItem.innerHTML = `
                 <li>
                     <strong>${user.username}</strong> (${user.email})<br>
@@ -626,6 +636,22 @@ function tabClicked(){
 }
 }
 
+// Функция для установки дат по умолчанию
+function setDefaultDates() {
+    const startInput = document.getElementById('input-date-start');
+    const endInput = document.getElementById('input-date-end');
+
+    if (startInput && endInput) {
+        const today = new Date();
+        const nextWeek = new Date();
+        nextWeek.setDate(today.getDate() + 7);
+
+        // Формат YYYY-MM-DD для input type="date"
+        startInput.value = today.toISOString().split('T')[0];
+        endInput.value = nextWeek.toISOString().split('T')[0];
+    }
+}
+
 /* async function expandMenu() {
     //!!!!!!!
     const menu = document.getElementById('expanded-menu');
@@ -658,6 +684,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (usersBox) {
             loadUsers();
             fillBookSelector();
+            setDefaultDates();
 
             const nameInput = document.getElementById('search-input-name');
             const emailInput = document.getElementById('search-input-email');
@@ -683,4 +710,43 @@ document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById('bookModal')) {
         initModal();
     }
+
+    const btnAddBookToUser = document.getElementById('button-add');
+
+if (btnAddBookToUser) {
+    btnAddBookToUser.addEventListener('click', async () => {
+        const userId = document.getElementById('selected-user-id').value;
+        const bookId = document.getElementById('book-select').value;
+        const startDate = document.getElementById('input-date-start').value;
+        const returnDate = document.getElementById('input-date-end').value;
+
+        if (!userId) return alert("Сначала выберите пользователя из списка!");
+        if (!bookId) return alert("Выберите книгу!");
+
+        const requestData = {
+            userId: userId,
+            bookId: bookId,
+            borrowedDate: new Date(startDate).toISOString(), 
+            returnDate: new Date(returnDate).toISOString()
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/users/borrow`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                alert("Книга успешно выдана пользователю!");
+                loadUsers(); // Обновляем список, чтобы увидеть изменения
+            } else {
+                const err = await response.json();
+                alert("Ошибка: " + err.message);
+            }
+        } catch (error) {
+            console.error("Ошибка при выдаче книги:", error);
+        }
+    });
+}
 });

@@ -1,12 +1,20 @@
 import mongoose from "mongoose";
 
 const borrowedBookSchema = new mongoose.Schema({
+  _id: false,
   bookId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Book',
     required: true
   },
-  returnDate: Date
+  borrowedDate: {
+    type: Date,
+    default: Date.now
+  },
+  returnDate: {
+    type: Date,
+    required: true
+  }
 });
 
 const userSchema = new mongoose.Schema({

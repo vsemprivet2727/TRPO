@@ -25,11 +25,15 @@
     <main>
         <div class="flexscroll-box">
             <div class="flex-column">
-             <div class="tabs nav-list" style="justify-content: left;">
-                <a id="tab-add" class="active"><img src="../resources/tabs/add.png" alt="">Добавить</a>
-                <a id="tab-remove"><img src="../resources/tabs/minus.png" alt="">Удалить</a>
-             </div>
-            <div class="filter-box" style="display: flex;">
+                <div class="tabs nav-list" style="justify-content: left;">
+                    <a id="tab-add" class="active"><img src="../resources/tabs/add.png" alt="">Добавить</a>
+                    <a id="tab-remove"><img src="../resources/tabs/minus.png" alt="">Удалить</a>
+                </div>
+
+                <div class="filter-box" style="display: flex; flex-direction: column;"> <div id="selection-info" style="margin-bottom: 10px; padding: 10px; background: #e7f3ff; border-radius: 8px; border: 1px solid #b3d7ff;">
+                    <input type="hidden" id="selected-user-id">
+                    <span id="selected-user-name" style="font-weight: bold; color: #0056b3;">👤 Пользователь не выбран</span>
+                </div>
                 <table class="filter-box-table">
                     <tr>
                         <td><label for="search-input">Поиск</label></td>
@@ -100,7 +104,7 @@
             </div>
         </div>
         </div>
-        <div id="userModal" class="modal">
+        <!--<div id="userModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Информация о читателе</h2>
@@ -110,7 +114,7 @@
                 <p><strong>Email:</strong> <span id="modalEmail">ivan@example.com</span></p>
                 <p><strong>Телефон:</strong> <span id="modalPhone">+375 (999) 123-45-67</span></p>
                 <p><strong>Книг на руках:</strong> <span id="modalBooks">3</span></p>
-            </div>
+            </div>-->
         </div>
     </div>
     </main>
