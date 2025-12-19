@@ -590,7 +590,7 @@ function tabClicked(){
     } else {
         menu.classList.add('active');
     }
-}
+}*/
 
 // DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {

@@ -13,8 +13,81 @@ document.addEventListener('DOMContentLoaded', function () {
 
     linkClicked('loginForm', 'regForm', 'switchToReg');
     linkClicked('regForm', 'loginForm', 'switchToLog');
-});
 
+    handleLogin();
+    handleRegistration();
+});
+function handleLogin() {
+    const loginForm = document.getElementById('loginForm');
+    if (!loginForm) return;
+
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById('login-text').value.trim();
+        const password = document.getElementById('password-input').value;
+
+        try {
+            const response = await fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('currentUser', data.username);
+                window.location.href = './UserPages/Books.html'; 
+            } else {
+                alert(data.message || 'Неверный логин или пароль');
+            }
+        } catch (err) {
+            console.error('Ошибка входа:', err);
+            alert('Сервер не отвечает');
+        }
+    });
+}
+
+function handleRegistration() {
+    const regForm = document.getElementById('regForm');
+    if (!regForm) return;
+
+    regForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById('reg-login-text').value;
+        const email = document.getElementById('email-input').value;
+        const password = document.getElementById('reg-password-input').value;
+        const passwordRepeat = document.getElementById('password-repeat-input').value;
+
+        if (password !== passwordRepeat) {
+            alert("Пароли не совпадают!");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Регистрация успешна!');
+                localStorage.setItem('currentUser', username);
+                window.location.href = './UserPages/Books.html';
+            } else {
+                alert(data.message || 'Ошибка регистрации');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Сервер не отвечает');
+        }
+    });
+}
 
 function togglePassword(passwordID, iconID) {
     const togglePassword = document.getElementById(iconID);

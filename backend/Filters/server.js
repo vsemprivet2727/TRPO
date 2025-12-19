@@ -129,4 +129,39 @@ app.get("/api/users", async (req, res) => {
   }
 });
 
+// Регистрация
+app.post("/api/register", async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        
+        if (existingUser) {
+            return res.status(400).json({ message: "Логин или Email уже заняты" });
+        }
+
+        const newUser = new User({ username, email, password });
+        await newUser.save();
+        res.status(201).json({ message: "Пользователь создан!" });
+    } catch (err) {
+        res.status(500).json({ message: "Ошибка сервера" });
+    }
+});
+
+// Вход
+app.post("/api/login", async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        // Если ты НЕ используешь bcrypt (шифрование), поиск выглядит так:
+        const user = await User.findOne({ username: username, password: password });
+
+        if (user) {
+            res.json({ username: user.username });
+        } else {
+            res.status(401).json({ message: "Логин или пароль неверны" });
+        }
+    } catch (err) {
+        res.status(500).json({ message: "Ошибка сервера" });
+    }
+});
+
 app.listen(3000, () => console.log("Server started on port 3000"));
