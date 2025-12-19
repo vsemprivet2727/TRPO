@@ -151,7 +151,6 @@ app.post("/api/register", async (req, res) => {
 app.post("/api/login", async (req, res) => {
     try {
         const { username, password } = req.body;
-        // Если ты НЕ используешь bcrypt (шифрование), поиск выглядит так:
         const user = await User.findOne({ username: username, password: password });
 
         if (user) {
@@ -161,6 +160,39 @@ app.post("/api/login", async (req, res) => {
         }
     } catch (err) {
         res.status(500).json({ message: "Ошибка сервера" });
+    }
+});
+
+// Получение книг конкретного пользователя
+app.get("/api/user-books", async (req, res) => {
+    try {
+        const { username } = req.query;
+        if (!username) return res.status(400).json({ message: "Username не указан" });
+
+        const user = await User.findOne({ username }).populate({
+            path: 'borrowedBooks.bookId',
+            select: 'title author publishDate genre publisher'
+        });
+
+        if (!user) return res.status(404).json({ message: "Пользователь не найден" });
+
+        // Преобразуем данные в удобный для фронтенда формат
+        const books = user.borrowedBooks.map(item => {
+            if (!item.bookId) return null;
+            return {
+                _id: item.bookId._id,
+                title: item.bookId.title,
+                author: item.bookId.author,
+                genre: item.bookId.genre,
+                publishDate: item.bookId.publishDate,
+                publisher: item.bookId.publisher,
+                returnDate: new Date(item.returnDate).toLocaleDateString()
+            };
+        }).filter(book => book !== null);
+
+        res.json(books);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

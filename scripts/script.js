@@ -138,8 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'new-book-genres',
         'new-book-inStock'
     ];
-
-    addButton.addEventListener('click', async () => {
+    if(addButton){
+        addButton.addEventListener('click', async () => {
         
         const titleValue = document.getElementById('new-book-name').value.trim();
         const authorValue = document.getElementById('new-book-author').value.trim();
@@ -220,8 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error:", error);
             alert("Ошибка сети");
         }
-    });
-
+        });
+    }
     //////////////////////
     //Удаление книги из бд
     //////////////////////
@@ -229,78 +229,88 @@ document.addEventListener('DOMContentLoaded', () => {
     const removeSelect = document.getElementById('select-for-remove');
     const removeButton = document.getElementById('remove-book-btn');
     const removeMessageDiv = document.getElementById('remove-message');
+    
+if (removeButton) {
 
-    //Загрузка книг в выпадающий список
+    // Загрузка книг в выпадающий список
     async function loadBooksForRemoval() {
+        // Дополнительная проверка внутри функции
+        if (!removeSelect) return; 
+
         try {
             const response = await fetch("http://localhost:3000/api/books");
-            if (!response.ok) {
-                throw new Error('Не удалось загрузить книги');
-            }
+            if (!response.ok) throw new Error('Не удалось загрузить книги');
+            
             const books = await response.json();
             
             removeSelect.innerHTML = '<option value="">Выберите книгу</option>';
 
-            // Добавляем каждую книгу как опцию
             books.forEach(book => {
                 const option = document.createElement('option');
-                option.value = book._id; // в value храним ID книги
+                option.value = book._id;
                 option.textContent = `${book.title} (${book.author})`;
                 removeSelect.appendChild(option);
             });
 
         } catch (error) {
-            console.error("Ошибка загрузки книг:", error);
-            removeMessageDiv.textContent = 'Ошибка загрузки списка книг.';
-            removeMessageDiv.style.color = 'red';
+            console.error("Ошибка загрузки книг для удаления:", error);
+            // Безопасно меняем текст, если див существует
+            if (removeMessageDiv) {
+                removeMessageDiv.textContent = 'Ошибка загрузки списка книг.';
+                removeMessageDiv.style.color = 'red';
+            }
         }
     }
 
-    // Запуск загрузки книг при старте
+    // Запуск загрузки списка книг
     loadBooksForRemoval();
 
     // Обработчик кнопки "Удалить"
     removeButton.addEventListener('click', async () => {
+        if (!removeSelect) return;
+        
         const bookId = removeSelect.value;
-        removeMessageDiv.textContent = '';
+        if (removeMessageDiv) removeMessageDiv.textContent = '';
 
         if (!bookId) {
-            removeMessageDiv.textContent = 'Пожалуйста, выберите книгу для удаления.';
-            removeMessageDiv.style.color = 'orange';
+            if (removeMessageDiv) {
+                removeMessageDiv.textContent = 'Пожалуйста, выберите книгу для удаления.';
+                removeMessageDiv.style.color = 'orange';
+            }
             return;
         }
 
         const confirmation = confirm(`Вы уверены, что хотите удалить книгу?`);
-        if (!confirmation) {
-            return;
-        }
+        if (!confirmation) return;
         
         try {
-            // Отправка DELETE-запрос, используя ID в URL
             const response = await fetch(`http://localhost:3000/api/books/${bookId}`, {
                 method: "DELETE" 
             });
 
             if (response.ok) {
                 const result = await response.json();
-                removeMessageDiv.textContent = `Успешно: ${result.message}`;
-                removeMessageDiv.style.color = 'green';
-                
-                // Перезагрузка списка, чтобы удаленная книга исчезла
+                if (removeMessageDiv) {
+                    removeMessageDiv.textContent = `Успешно: ${result.message}`;
+                    removeMessageDiv.style.color = 'green';
+                }
                 loadBooksForRemoval(); 
-
             } else {
                 const errorData = await response.json();
-                removeMessageDiv.textContent = `Ошибка: ${errorData.message || response.statusText}`;
+                if (removeMessageDiv) {
+                    removeMessageDiv.textContent = `Ошибка: ${errorData.message || response.statusText}`;
+                    removeMessageDiv.style.color = 'red';
+                }
+            }
+        } catch (error) {
+            console.error("Ошибка сети при удалении:", error);
+            if (removeMessageDiv) {
+                removeMessageDiv.textContent = 'Ошибка сети. Проверьте сервер.';
                 removeMessageDiv.style.color = 'red';
             }
-
-        } catch (error) {
-            console.error("Ошибка сети:", error);
-            removeMessageDiv.textContent = 'Ошибка сети. Проверьте запуск сервера.';
-            removeMessageDiv.style.color = 'red';
         }
     });
+}
 
     const resetFiltersButton = document.getElementById('reset-filters-btn');
 
@@ -395,6 +405,7 @@ async function fillBookSelector(){
 }
 // Наполнение селектов
 async function populateFilters() {
+    if (!authorSelect) return;
     try {
         const response = await fetch(`${API_URL}/books`);
         const books = await response.json();
@@ -515,6 +526,49 @@ async function loadUsers() {
 
 }
 
+// Функция для загрузки книг конкретного пользователя
+async function loadUserBooks(username) {
+    const scrollBox = document.querySelector('.scroll-box'); 
+    if (!scrollBox) return;
+
+    try {
+        const response = await fetch(`${API_URL}/user-books?username=${username}`);
+        if (!response.ok) throw new Error('Сервер вернул ошибку');
+        
+        const books = await response.json();
+
+        scrollBox.innerHTML = `
+            <div class="scroll-box-item">
+                <h2>Книги у Вас</h2>
+            </div>
+        `;
+
+        if (books.length === 0) {
+            scrollBox.innerHTML += '<div class="scroll-box-item"><p>У вас пока нет взятых книг.</p></div>';
+            return;
+        }
+
+        books.forEach(book => {
+            const bookItem = document.createElement('div');
+            bookItem.className = 'scroll-box-item book-card';
+            bookItem.innerHTML = `
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; flex-direction: column; text-align: left;">
+                        <span style="font-weight: bold;">${book.title}</span>
+                        <small>${book.author}</small>
+                        <small style="color: #ff4d4d; margin-top: 5px;">Вернуть: ${book.returnDate}</small>
+                    </div>
+                    <img src="../resources/Book open.png" alt="Книга" style="width: 30px; height: 30px;">
+                </div>
+            `;
+            bookItem.addEventListener('click', () => openBookModal(book));
+            scrollBox.appendChild(bookItem);
+        });
+    } catch (error) {
+        console.error('Ошибка загрузки личных книг: ', error);
+    }
+}
+
 function tabClicked(){
     if (window.location.pathname.includes("Main.html")) {
         const tabFilters = document.getElementById("tab-filters");
@@ -595,34 +649,48 @@ function tabClicked(){
 // DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
 
+    const currentUser = localStorage.getItem('currentUser');
+    const userDisplay = document.getElementById('user-display-name');
+    const path = window.location.pathname;
+    
     tabClicked();
-    // Если на странице книг (Main.html)
-    if (window.location.pathname.includes("Main.html")) {
-        populateFilters();
-        loadBooks();
-        initModal();
-    }
 
-    // Если на странице пользователей (Users.html или ReturnBooks.html)
-    if (document.getElementById("users-scroll-box")) {
-        const nameInput = document.getElementById('search-input-name');
-        const emailInput = document.getElementById('search-input-email');
-
-        if (nameInput) {
-            nameInput.addEventListener('input', loadUsers);
+    if (path.includes("Main.html") || path.includes("Books.html")) {
+        if (document.getElementById('books-scroll-box')) {
+            populateFilters();
+            loadBooks();
         }
-        if (emailInput) {
-            emailInput.addEventListener('input', loadUsers);
-        }
-        loadUsers();
-    }
-    if (window.location.pathname.includes("Users.html")) {
-        fillBookSelector();
     }
 
-        if (window.location.pathname.includes("Books.html")) {
-        populateFilters();
-        loadBooks();
+    if (path.includes("Users.html")) {
+        const usersBox = document.getElementById("users-scroll-box");
+        
+        if (usersBox) {
+            loadUsers();
+            fillBookSelector();
+
+            const nameInput = document.getElementById('search-input-name');
+            const emailInput = document.getElementById('search-input-email');
+
+            if (nameInput) nameInput.addEventListener('input', loadUsers);
+            if (emailInput) emailInput.addEventListener('input', loadUsers);
+        }
+    }
+
+    if (path.includes("UsersBooks.html")) {
+        if (currentUser && userDisplay) {
+        userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${currentUser}`;
+    }
+        if (currentUser) {
+            if (document.querySelector('.scroll-box')) {
+                loadUserBooks(currentUser);
+            }
+        } else {
+            window.location.href = '../Auth.html'; 
+        }
+    }
+
+    if (document.getElementById('bookModal')) {
         initModal();
     }
 });

@@ -38,7 +38,7 @@ function handleLogin() {
 
             if (response.ok) {
                 localStorage.setItem('currentUser', data.username);
-                window.location.href = './UserPages/Books.html'; 
+                window.location.href = './UserPages/UsersBooks.html'; 
             } else {
                 alert(data.message || 'Неверный логин или пароль');
             }
@@ -78,7 +78,7 @@ function handleRegistration() {
             if (response.ok) {
                 alert('Регистрация успешна!');
                 localStorage.setItem('currentUser', username);
-                window.location.href = './UserPages/Books.html';
+                window.location.href = './UserPages/UsersBooks.html';
             } else {
                 alert(data.message || 'Ошибка регистрации');
             }
