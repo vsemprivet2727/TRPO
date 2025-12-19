@@ -345,41 +345,31 @@ if (removeButton) {
 
 // ФИЛЬТРАЦИЯ
 
-// Элементы фильтров
-const authorSelect = document.getElementById("author-select");
-const publisherSelect = document.getElementById("publisher-select");
-const genreSelect = document.getElementById("genre-select");
-const yearInput = document.getElementById("input-year");
-const inStockCheckbox = document.getElementById("checkbox-is-we-have");
-const langSelect = document.getElementById('select-lang');
-const inputPages = document.getElementById('input-pages');
-
-// Назначаем слушателя события
-if (authorSelect) authorSelect.addEventListener("change", applyFilters);
-if (publisherSelect) publisherSelect.addEventListener("change", applyFilters);
-if (genreSelect) genreSelect.addEventListener("change", applyFilters);
-if (yearInput) yearInput.addEventListener("input", applyFilters);
-if (inStockCheckbox) inStockCheckbox.addEventListener("change", applyFilters);
-if (langSelect) langSelect.addEventListener('change', applyFilters);
-if (inputPages) inputPages.addEventListener('input', applyFilters);
-
-
-// Функция фильтрации
 async function applyFilters() {
     const params = new URLSearchParams();
+    
+    // Получаем элементы прямо в момент вызова функции
+    const fAuthor = document.getElementById("author-select");
+    const fPublisher = document.getElementById("publisher-select");
+    const fGenre = document.getElementById("genre-select");
+    const fYear = document.getElementById("input-year");
+    const fStock = document.getElementById("checkbox-is-we-have");
 
-    if (authorSelect.value) params.append("author", authorSelect.value);
-    if (publisherSelect.value) params.append("publisher", publisherSelect.value);
-    if (genreSelect.value) params.append("genre", genreSelect.value);
-    if (yearInput.value) params.append("year", yearInput.value);
-    if (inStockCheckbox.checked) params.append("inStock", "true");
-    if (langSelect.value) params.append('language', langSelect.value);
-    if (inputPages.value) params.append('pages', inputPages.value);
+    if (fAuthor?.value) params.append("author", fAuthor.value);
+    if (fPublisher?.value) params.append("publisher", fPublisher.value);
+    if (fGenre?.value) params.append("genre", fGenre.value);
+    if (fYear?.value) params.append("year", fYear.value);
+    if (fStock?.checked) params.append("inStock", "true");
 
-    const response = await fetch(`${API_URL}/books?` + params.toString());
-    const books = await response.json();
-    displayBooks(books);
+    try {
+        const response = await fetch(`${API_URL}/books?` + params.toString());
+        const books = await response.json();
+        displayBooks(books);
+    } catch (err) {
+        console.error("Ошибка фильтрации:", err);
+    }
 }
+
 // Селектор книг у пользователей
 async function fillBookSelector(){
     const bookSelect = document.getElementById("book-select")
@@ -405,7 +395,12 @@ async function fillBookSelector(){
 }
 // Наполнение селектов
 async function populateFilters() {
-    if (!authorSelect) return;
+    const fAuthor = document.getElementById("author-select");
+    const fPublisher = document.getElementById("publisher-select");
+    const fGenre = document.getElementById("genre-select");
+
+    if (!fAuthor || !fPublisher || !fGenre) return;
+
     try {
         const response = await fetch(`${API_URL}/books`);
         const books = await response.json();
@@ -414,47 +409,42 @@ async function populateFilters() {
         const publishers = new Set();
         const genres = new Set();
 
-        // Чистим перед добавлением
-        authorSelect.innerHTML = '<option value="">Все авторы</option>';
-        publisherSelect.innerHTML = '<option value="">Все издатели</option>';
-        genreSelect.innerHTML = '<option value="">Все жанры</option>';
-
-        // Собираем данные из книг
         books.forEach(book => {
             if (book.author) authors.add(book.author);
             if (book.publisher) publishers.add(book.publisher);
             if (book.genre) book.genre.forEach(g => genres.add(g));
         });
 
-        // Заполняем авторов
-        authors.forEach(author => {
-            const opt = document.createElement("option");
-            opt.value = author;
-            opt.textContent = author;
-            authorSelect.appendChild(opt);
-        });
+        fAuthor.innerHTML = '<option value="">Все авторы</option>';
+        fPublisher.innerHTML = '<option value="">Все издатели</option>';
+        fGenre.innerHTML = '<option value="">Все жанры</option>';
 
-        // Заполняем издателей
-        publishers.forEach(pub => {
-            const opt = document.createElement("option");
-            opt.value = pub;
-            opt.textContent = pub;
-            publisherSelect.appendChild(opt);
-        });
+        authors.forEach(a => fAuthor.innerHTML += `<option value="${a}">${a}</option>`);
+        publishers.forEach(p => fPublisher.innerHTML += `<option value="${p}">${p}</option>`);
+        genres.forEach(g => fGenre.innerHTML += `<option value="${g}">${g}</option>`);
 
-        // Заполняем жанры
-        genres.forEach(g => {
-            const opt = document.createElement("option");
-            opt.value = g;
-            opt.textContent = g;
-            genreSelect.appendChild(opt);
-        });
-
+        // После того как создали option, вешаем на них события
+        setupFilterListeners();
+        
     } catch (err) {
         console.error("Ошибка при заполнении фильтров:", err);
     }
 }
 
+// Отдельная функция для навешивания слушателей
+function setupFilterListeners() {
+    const ids = ["author-select", "publisher-select", "genre-select"];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("change", applyFilters);
+    });
+
+    const yearInput = document.getElementById("input-year");
+    if (yearInput) yearInput.addEventListener("input", applyFilters);
+
+    const stockCb = document.getElementById("checkbox-is-we-have");
+    if (stockCb) stockCb.addEventListener("change", applyFilters);
+}
 
 async function loadUsers() {
     
@@ -655,10 +645,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     tabClicked();
 
-    if (path.includes("Main.html") || path.includes("Books.html")) {
+   if (path.includes("Main.html") || path.includes("Books.html")) {
         if (document.getElementById('books-scroll-box')) {
-            populateFilters();
             loadBooks();
+            populateFilters();
         }
     }
 
