@@ -18,12 +18,15 @@ const borrowedBookSchema = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-  username: String,
+  username: { type: String, required: true, unique: true },
   email: String,
   password: String,
-  borrowedBooks: [borrowedBookSchema]
+  borrowedBooks: [borrowedBookSchema],
+  wishlist: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Book'
+  }]
 });
 
 const User = mongoose.model("User", userSchema);
-
 export default User;

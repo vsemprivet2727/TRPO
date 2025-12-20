@@ -18,35 +18,36 @@ document.addEventListener('DOMContentLoaded', function () {
     handleRegistration();
 });
 function handleLogin() {
-    const loginForm = document.getElementById('loginForm');
-    if (!loginForm) return;
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+const loginForm = document.getElementById('loginForm');
 
-        const username = document.getElementById('login-text').value.trim();
-        const password = document.getElementById('password-input').value;
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        try {
-            const response = await fetch('http://localhost:3000/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
+    const username = document.getElementById('login-text').value;
+    const password = document.getElementById('password-input').value;
 
-            const data = await response.json();
+    try {
+        const response = await fetch('http://localhost:3000/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
 
-            if (response.ok) {
-                localStorage.setItem('currentUser', data.username);
-                window.location.href = './UserPages/UsersBooks.html'; 
-            } else {
-                alert(data.message || 'Неверный логин или пароль');
-            }
-        } catch (err) {
-            console.error('Ошибка входа:', err);
-            alert('Сервер не отвечает');
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem('username', data.username); 
+            
+            alert('Вход выполнен успешно!');
+            window.location.href = 'Main.html';
+        } else {
+            alert(data.message || 'Ошибка входа');
         }
-    });
+    } catch (err) {
+        console.error('Ошибка:', err);
+    }
+});
 }
 
 function handleRegistration() {

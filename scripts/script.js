@@ -2,26 +2,29 @@
 
 const API_URL = 'http://localhost:3000/api';
 
+const AUTH_KEY = 'currentUser'; 
+
+console.log("Проверка авторизации...");
+console.log("LocalStorage:", localStorage.getItem(AUTH_KEY));
+
+let currentSelectedBookId = null;
 
 async function loadBooks() {
     console.log('Загрузка книг с API...');
     try {
-        
         const response = await fetch(`${API_URL}/books`);
-        console.log('Ответ от сервера:', response);
-
         if (!response.ok) throw new Error('Ошибка загрузки книг');
-        
         const books = await response.json();
         displayBooks(books);
-    }
-     catch (error) {
+    } catch (error) {
         console.error('Error loading books: ', error);
-     }
+    }
 }
 
 function displayBooks(books) {
     const scrollBox = document.getElementById('books-scroll-box');
+    if (!scrollBox) return;
+
     scrollBox.innerHTML = `
         <div class="scroll-box-item">
             <h2>Книги у нас</h2>
@@ -29,29 +32,23 @@ function displayBooks(books) {
     `;
     
     if (books.length === 0) {
-        scrollBox.innerHTML = '<p>Книги не найдены</p>';
+        scrollBox.innerHTML += '<p>Книги не найдены</p>';
         return;
     }
-    
     
     books.forEach(book => {
         const bookItem = document.createElement('ul');
         bookItem.className = 'scroll-box-item book-card';
         bookItem.innerHTML = `
-            <li style= "display: flex; flex-direction: row; justify-content: space-between;">
-            <div style="display: flex; flex-direction: column; text-align: left;">
-            <span style="font-weight: bold;">${book.title}</span>
-            <small align="left">${book.author}</small>
-            </div>
-            <img src="../resources/Book open.png" alt="Книга">
+            <li style="display: flex; flex-direction: row; justify-content: space-between;">
+                <div style="display: flex; flex-direction: column; text-align: left;">
+                    <span style="font-weight: bold;">${book.title}</span>
+                    <small>${book.author}</small>
+                </div>
+                <img src="../resources/Book open.png" alt="Книга">
             </li>
-
         `;
-
-
-        // Привязываем модалку
         bookItem.addEventListener('click', () => openBookModal(book));
-        
         scrollBox.appendChild(bookItem);
     });
 }
@@ -85,33 +82,80 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initModal() {
-    closeBtn.addEventListener('click', closeModal);
-    
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
+    const modal = document.getElementById('bookModal');
+    const closeBtn = document.querySelector('.close');
+    const requestBtn = document.querySelector('#bookModal .btn-primary');
 
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
-    });
+    if (!modal) return;
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+        currentSelectedBookId = null;
+    };
+
+    if (closeBtn) closeBtn.onclick = closeModal;
+    
+    window.onclick = (event) => {
+        if (event.target === modal) closeModal();
+    };
+
+    document.onkeydown = (event) => {
+        if (event.key === 'Escape') closeModal();
+    };
+
+    // ОБРАБОТКА КНОПКИ "ЗАПРОСИТЬ"
+    if (requestBtn) {
+        requestBtn.onclick = async () => {
+            const user = localStorage.getItem(AUTH_KEY);
+
+            if (!user || user === "null") {
+                alert("Пожалуйста, войдите в систему, чтобы оставить заявку");
+                return;
+            }
+
+            if (!currentSelectedBookId) return;
+
+            try {
+                const response = await fetch(`${API_URL}/users/wishlist`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: user,
+                        bookId: currentSelectedBookId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Книга добавлена в ваши заявки!");
+                    closeModal();
+                } else {
+                    alert(data.message || "Ошибка при создании заявки");
+                }
+            } catch (error) {
+                console.error("Ошибка запроса:", error);
+                alert("Сервер не отвечает");
+            }
+        };
+    }
 }
 
 function openBookModal(book) {
+    const modal = document.getElementById('bookModal');
+    
+    currentSelectedBookId = book._id || book.id;
+
     document.getElementById('modalTitle').textContent = book.title;
     document.getElementById('modalAuthor').textContent = book.author;
     document.getElementById('modalYear').textContent = new Date(book.publishDate).getFullYear();
-    document.getElementById('modalGenre').textContent = book.genre.join(', ');
+    document.getElementById('modalGenre').textContent = Array.isArray(book.genre) ? book.genre.join(', ') : book.genre;
     document.getElementById('modalPublisher').textContent = book.publisher;
+    
     modal.style.display = 'block';
 }
 
-function closeModal() {
-    modal.style.display = 'none';
-}
+
 
 function setupBookClicks() {
     const bookItems = document.querySelectorAll('.scroll-box-item');
@@ -698,8 +742,75 @@ function setDefaultDates() {
     }
 }*/
 
+
+
+async function loadWishlists() {
+    const listContainer = document.getElementById('return-books-list');
+    
+    try {
+        const [usersRes, booksRes] = await Promise.all([
+            fetch(`${API_URL}/users`),
+            fetch(`${API_URL}/books`)
+        ]);
+
+        if (!usersRes.ok || !booksRes.ok) throw new Error('Ошибка при загрузке данных');
+        
+        const users = await usersRes.json();
+        const allBooks = await booksRes.json();
+        
+        listContainer.innerHTML = '';
+
+        const usersWithRequests = users.filter(user => user.wishlist && user.wishlist.length > 0);
+
+        if (usersWithRequests.length === 0) {
+            listContainer.innerHTML = '<li>Запросов пока нет</li>';
+            return;
+        }
+
+        usersWithRequests.forEach(user => {
+            const li = document.createElement('li');
+            li.className = 'scroll-box-item';
+            li.style.marginBottom = '20px';
+            li.style.padding = '15px';
+            li.style.borderBottom = '1px solid #ccc';
+            li.style.listStyle = 'none';
+
+            const booksHtml = user.wishlist.map(wishId => {
+                const bookData = allBooks.find(b => (b._id === wishId || b.id === wishId));
+                
+                if (bookData) {
+                    return `
+                        <div style="margin-left: 20px; color: #555; margin-bottom: 5px;">
+                            <span><strong>${bookData.title}</strong> — ${bookData.author}</span>
+                        </div>
+                    `;
+                } else {
+                    return `<div style="margin-left: 20px; color: #999;">Книга удалена или не найдена (ID: ${wishId})</div>`;
+                }
+            }).join('');
+
+            li.innerHTML = `
+                <div style="font-size: 1.1rem; font-weight: bold; color: #007bff; margin-bottom: 8px;">
+                    ${user.username} (${user.email})
+                </div>
+                <div class="user-books-request">
+                    ${booksHtml}
+                </div>
+            `;
+            
+            listContainer.appendChild(li);
+        });
+
+    } catch (error) {
+        console.error('Ошибка:', error);
+        listContainer.innerHTML = '<li>Ошибка загрузки данных</li>';
+    }
+}
+
 // DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
+
+    
 
     //Обработчик кнопки "Удалить" книгу у пользователя
     const btnRemove = document.getElementById('button-remove');
@@ -767,6 +878,12 @@ if (btnExport) {
     const currentUser = localStorage.getItem('currentUser');
     const userDisplay = document.getElementById('user-display-name');
     const path = window.location.pathname;
+
+    const storedUser = localStorage.getItem('username'); 
+
+    if (storedUser && userDisplay) {
+        userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${storedUser}`;
+    }
     
     tabClicked();
 
@@ -808,6 +925,10 @@ if (btnExport) {
 
     if (document.getElementById('bookModal')) {
         initModal();
+    }
+
+    if (document.getElementById('return-books-list')) {
+        loadWishlists();
     }
 
     const btnAddBookToUser = document.getElementById('button-add');

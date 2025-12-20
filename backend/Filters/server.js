@@ -233,4 +233,30 @@ app.delete('/api/users/:userId/return/:bookId', async (req, res) => {
     }
 });
 
+// Добавить книгу в список желаемого
+app.post("/api/users/wishlist", async (req, res) => {
+    try {
+        const { username, bookId } = req.body;
+
+        if (!username || !bookId) {
+            return res.status(400).json({ message: "Недостаточно данных" });
+        }
+
+        const user = await User.findOne({ username });
+        if (!user) return res.status(404).json({ message: "Пользователь не найден" });
+
+        // Проверяем, нет ли уже этой книги в списке желаемого
+        if (user.wishlist.includes(bookId)) {
+            return res.status(400).json({ message: "Книга уже в списке желаемого" });
+        }
+
+        user.wishlist.push(bookId);
+        await user.save();
+
+        res.status(200).json({ message: "Заявка успешно создана!" });
+    } catch (err) {
+        res.status(500).json({ message: "Ошибка сервера: " + err.message });
+    }
+});
+
 app.listen(3000, () => console.log("Server started on port 3000"));
