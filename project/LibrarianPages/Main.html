@@ -93,7 +93,7 @@
                     </tr>-->
                 </table>
             </div>
-            <div class="modal-box" id="add-book">
+            <div class="modal-box" id="add-book" style="display: none;">
                 <h3 align="center">Добавить книгу</h1>
                     <form action="">
                     <table class="filter-box-table">
@@ -134,7 +134,7 @@
                         <button class="btn btn-primary" id="add-new-book">Добавить</button>
                     </div>
                 </div>
-                        <div class="modal-box" id="remove-book">
+                        <div class="modal-box" id="remove-book" style="display: none;">
                             <h3 align="center">Удалить книгу</h3> 
                             <table class="filter-box-table">
                             <tr>
@@ -150,13 +150,14 @@
                                 <button class="btn btn-primary" onclick="closeRemoveBook()">Закрыть</button>
                                 <button class="btn btn-primary" id="remove-book-btn">Удалить</button>
                             </div>
-                            <div id="remove-message"></div> 
                         </div>
         <div class="tabs">
             <a id="tab-add-book" onclick="openAddBook()"class="active"><img src="../resources/tabs/add-book.png" alt=""></a>
             <a id="tab-remove-book" onclick="openRemoveBook()"><img src="../resources/tabs/remove-book.png" alt=""></a>
         </div>
+        
         <div class="scroll-box" id="books-scroll-box">
+<div class="top-panel">
                 <div class="search active" id="search-container" onclick="searchClicked()">
                     <img src="../resources/search.png" alt="">
                     <input type="text" id="input-search">
@@ -215,6 +216,7 @@
                 </table>
                 <button class="btn btn-primary" style="place-self: center; display: none;" id="reset-filters-btn">Сбросить</button>
                 </div>
+                </div>            
             <!-- <div><img src="../resources/tabs/filter.png" alt="" width="18px" height="18px" onclick="filtersClicked()"></div> -->
             <div class="scroll-box-item">
                 

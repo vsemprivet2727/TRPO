@@ -163,21 +163,25 @@ main {
     list-style: none;
     width: 85vw;
     height:80vh;
-    padding: 30px 50px;
+    padding: 30px 30px;
     scroll-behavior: smooth;
     background-color: #ffffff;
     border-radius: 50px;
     overflow-y: auto;
     scrollbar-width: none;
     display: flex;
+    flex-direction: column;
     justify-content: baseline;
 }
 
-.scroll-box.top-panel {
-    width:810px;
+.top-panel {
+    position: absolute;
+    z-index: 1000;
+    width:75%;
     display: flex;
+    align-self: center;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .search {
@@ -279,7 +283,7 @@ main {
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    padding: 15px;
+    padding: 15px 0px;
 }
 
 .scroll-box-item h2 {

@@ -5,7 +5,7 @@ const API_URL = 'http://localhost:3000/api';
 const AUTH_KEY = 'currentUser'; 
 
 console.log("Проверка авторизации...");
-console.log("LocalStorage:", localStorage.getItem(AUTH_KEY));
+//console.log("LocalStorage:", localStorage.getItem(AUTH_KEY));
 
 let currentSelectedBookId = null;
 
@@ -24,18 +24,15 @@ async function loadBooks() {
 function displayBooks(books) {
     const scrollBox = document.getElementById('books-scroll-box');
     if (!scrollBox) return;
-
-    scrollBox.innerHTML = `
-        <div class="scroll-box-item">
-            <h2>Книги у нас</h2>
-        </div>
-    `;
     
     if (books.length === 0) {
         scrollBox.innerHTML += '<p>Книги не найдены</p>';
         return;
     }
-    
+
+    const bookItems = scrollBox.querySelectorAll('.book-card');
+    bookItems.forEach(item => item.remove());
+
     books.forEach(book => {
         const bookItem = document.createElement('ul');
         bookItem.className = 'scroll-box-item book-card';
@@ -257,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById(id).value = '';
                 });
                 document.getElementById('new-book-inStock').value = '';
+                loadBooks();
             } else {
                 alert("Ошибка при добавлении");
             }
@@ -272,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const removeSelect = document.getElementById('select-for-remove');
     const removeButton = document.getElementById('remove-book-btn');
-    const removeMessageDiv = document.getElementById('remove-message');
     
 if (removeButton) {
 
@@ -298,11 +295,7 @@ if (removeButton) {
 
         } catch (error) {
             console.error("Ошибка загрузки книг для удаления:", error);
-            // Безопасно меняем текст, если див существует
-            if (removeMessageDiv) {
-                removeMessageDiv.textContent = 'Ошибка загрузки списка книг.';
-                removeMessageDiv.style.color = 'red';
-            }
+            alert('Ошибка при попытки подключения');
         }
     }
 
@@ -314,13 +307,9 @@ if (removeButton) {
         if (!removeSelect) return;
         
         const bookId = removeSelect.value;
-        if (removeMessageDiv) removeMessageDiv.textContent = '';
 
         if (!bookId) {
-            if (removeMessageDiv) {
-                removeMessageDiv.textContent = 'Пожалуйста, выберите книгу для удаления.';
-                removeMessageDiv.style.color = 'orange';
-            }
+            alert('Выберите книгу')
             return;
         }
 
@@ -334,24 +323,16 @@ if (removeButton) {
 
             if (response.ok) {
                 const result = await response.json();
-                if (removeMessageDiv) {
-                    removeMessageDiv.textContent = `Успешно: ${result.message}`;
-                    removeMessageDiv.style.color = 'green';
-                }
-                loadBooksForRemoval(); 
+                alert('Книга успешно удалена')
+                await loadBooksForRemoval(); 
+                loadBooks();
             } else {
                 const errorData = await response.json();
-                if (removeMessageDiv) {
-                    removeMessageDiv.textContent = `Ошибка: ${errorData.message || response.statusText}`;
-                    removeMessageDiv.style.color = 'red';
-                }
+                alert(`Ошибка: ${errorData.message || response.statusText}`)
             }
         } catch (error) {
             console.error("Ошибка сети при удалении:", error);
-            if (removeMessageDiv) {
-                removeMessageDiv.textContent = 'Ошибка сети. Проверьте сервер.';
-                removeMessageDiv.style.color = 'red';
-            }
+            alert('Ошибка сети')
         }
     });
 }
@@ -940,8 +921,6 @@ if (btnExport) {
     if (storedUser && userDisplay) {
         userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${storedUser}`;
     }
-    
-    tabClicked();
 
    if (path.includes("Main.html") || path.includes("Books.html")) {
         if (document.getElementById('books-scroll-box')) {
