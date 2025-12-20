@@ -624,8 +624,64 @@ async function loadUserBooks(username) {
         console.error('Ошибка загрузки личных книг: ', error);
     }
 }
+function searchClicked() {
+    const search = document.getElementById('search-container');
+    const filter = document.getElementById('filter-container');
+    const table = document.getElementById('filters-table')
+    const input = document.getElementById('input-search');
+    const btn = document.getElementById('reset-filters-btn')
+    if(search.classList.contains('active')) 
+        input.focus();
+    else {
+        search.classList.add('active');
+        filter.classList.remove('active');
+        table.style.display = 'none';
+        btn.style.display = 'none';
+    }
+}
+function filtersClicked(){
+    const filter = document.getElementById('filter-container');
+    const search = document.getElementById('search-container');
+    const table = document.getElementById('filters-table');
+    const btn = document.getElementById('reset-filters-btn')
 
-function tabClicked(){
+    filter.classList.add('active');
+    table.style.display = 'flex';
+    btn.style.display = 'flex';
+    search.classList.remove('active');
+
+}
+function openAddBook() {
+    const window = document.getElementById('add-book');
+    window.style.display = 'flex';
+    window.classList.add('active');
+}
+function closeAddBook() {
+    const window = document.getElementById('add-book');
+    window.classList.remove('active');
+    setTimeout(() => {
+        window.style.display = 'none'
+    }, 300)
+}
+function openRemoveBook() {
+    const window = document.getElementById('remove-book');
+    window.style.display = 'flex';
+    window.classList.add('active');
+}
+function closeRemoveBook() {
+    const window = document.getElementById('remove-book');
+    window.classList.remove('active');
+    setTimeout(() => {
+        window.style.display = 'none'
+    }, 300)
+}
+
+function inStockClicked() {
+    const thumblerBtn = document.getElementById('thumbler-btn');
+    if(thumblerBtn.classList.contains('on')) thumblerBtn.classList.remove('on');
+    else thumblerBtn.classList.add('on')
+}
+/* function tabClicked(){
 
     const tabAdd = document.getElementById('tab-add');
     const tabRemove = document.getElementById('tab-remove');
@@ -715,7 +771,7 @@ function tabClicked(){
     }
 }
 }
-
+ */
 // Функция для установки дат по умолчанию
 function setDefaultDates() {
     const startInput = document.getElementById('input-date-start');

@@ -43,13 +43,7 @@
     
     <main>
         <div class="flexscroll-box">
-            <div class="flex-column">
-            <div class="tabs nav-list" style="justify-content: left;">
-                <a id="tab-filters" class="active"><img src="../resources/tabs/filter.png" alt="">Фильтры</a>
-                <a id="tab-add-book"><img src="../resources/tabs/add-book.png" alt="">Добавить</a>
-                <a id="tab-remove-book"><img src="../resources/tabs/remove-book.png" alt="">Удалить</a>
-            </div>
-            <div class="filter-box" id="filters" style="display: flex;">
+            <div class="modal-box" id="filters" style="display: none;">
                 <table class="filter-box-table">
                     <tr>
                         <td><label for="checkbox-is-we-have">В наличии</label></td>
@@ -98,9 +92,8 @@
                         <td><input type="text" id="input-pages"></td>
                     </tr>-->
                 </table>
-                <button class="btn btn-primary" id="reset-filters-btn">Сбросить</button>
             </div>
-            <div class="filter-box" id="add-book">
+            <div class="modal-box" id="add-book">
                 <h3 align="center">Добавить книгу</h1>
                     <form action="">
                     <table class="filter-box-table">
@@ -136,9 +129,12 @@
                         </tr>
                     </table>
                     </form>
-                    <button class="btn btn-primary" id="add-new-book">Добавить</button>
-                                </div>
-                        <div class="filter-box" id="remove-book">
+                    <div class="modal-box-btns">
+                        <button class="btn btn-primary" onclick="closeAddBook()">Закрыть</button>
+                        <button class="btn btn-primary" id="add-new-book">Добавить</button>
+                    </div>
+                </div>
+                        <div class="modal-box" id="remove-book">
                             <h3 align="center">Удалить книгу</h3> 
                             <table class="filter-box-table">
                             <tr>
@@ -150,14 +146,78 @@
                                 </td>
                             </tr>
                             </table>
-                            
-                            <button class="btn btn-primary" id="remove-book-btn">Удалить</button>
-                            
-                            <div id="remove-message" style="margin-top: 10px;"></div> 
+                            <div class="modal-box-btns">
+                                <button class="btn btn-primary" onclick="closeRemoveBook()">Закрыть</button>
+                                <button class="btn btn-primary" id="remove-book-btn">Удалить</button>
+                            </div>
+                            <div id="remove-message"></div> 
                         </div>
-                </div>
+        <div class="tabs">
+            <a id="tab-add-book" onclick="openAddBook()"class="active"><img src="../resources/tabs/add-book.png" alt=""></a>
+            <a id="tab-remove-book" onclick="openRemoveBook()"><img src="../resources/tabs/remove-book.png" alt=""></a>
+        </div>
         <div class="scroll-box" id="books-scroll-box">
+                <div class="search active" id="search-container" onclick="searchClicked()">
+                    <img src="../resources/search.png" alt="">
+                    <input type="text" id="input-search">
+                </div>
+                <div class="filters" id="filter-container" onclick="filtersClicked()">
+                    <img src="../resources/tabs/filter.png" alt="" width="18px" height="18px" onclick="filterClicked()">
+                <table class="filter-box-table" id="filters-table" style="display: none;">
+                    <tr>
+                        <td><label for="checkbox-is-we-have">В наличии</label></td>
+                        <td>
+                            <div class="in-stock-thumbler" onclick="inStockClicked()" id="thumbler">
+                                <div class="in-stock-thumbler-btn" id="thumbler-btn"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="genre-select" >Жанр</label></td>
+                        <td>
+                             <select id="genre-select">
+                                <!-- с бд подгрузка-->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="publisher-select">Издатель</label></td>
+                        <td>
+                            <select id="publisher-select">
+                                <!-- с бд подгрузка-->
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="author-select">Автор</label></td>
+                        <td>
+                            <select id="author-select">
+                                <!-- с бд подгрузка-->
+                            </select>
+                        </td>
+                    </tr>
+                <!--<tr>
+                        <td><label for="select-lang">Язык</label></td>
+                        <td>
+                            <select name="" id="select-lang">
+                                
+                            </select>
+                        </td>
+                     --></tr>
+                    <tr>
+                        <td><label for="input-year">Год</label></td>
+                        <td><input type="text" name="input-year" id="input-year" placeholder=""></td>
+                    </tr>
+                    <!--<tr>
+                        <td><label for="input-pages">Количество страниц</label></td>
+                        <td><input type="text" id="input-pages"></td>
+                    </tr>-->
+                </table>
+                <button class="btn btn-primary" style="place-self: center; display: none;" id="reset-filters-btn">Сбросить</button>
+                </div>
+            <!-- <div><img src="../resources/tabs/filter.png" alt="" width="18px" height="18px" onclick="filtersClicked()"></div> -->
             <div class="scroll-box-item">
+                
             </div>
         </div>
         </div>
