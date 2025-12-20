@@ -495,11 +495,23 @@ async function loadUsers() {
 
             userItem.addEventListener('click', () => {
                 document.getElementById('selected-user-id').value = user._id;
-                document.getElementById('selected-user-name').textContent = `Выбран: ${user.username}`;
-        
-                document.querySelectorAll('.user-card').forEach(card => card.style.border = 'none');
-                userItem.style.border = '2px solid #007bff';
-            });
+                document.getElementById('selected-user-name').textContent = `👤 Выбран: ${user.username}`;
+
+            const removeSelect = document.getElementById('user-borrowed-books-select');
+            if (removeSelect) {
+                removeSelect.innerHTML = '<option value="">Выберите книгу для удаления</option>';
+                if (user.borrowedBooks && user.borrowedBooks.length > 0) {
+                    user.borrowedBooks.forEach(b => {
+                        const option = document.createElement('option');
+                        option.value = b.bookId._id || b.bookId; 
+                        option.textContent = b.bookId.title || "Книга без названия";
+                        removeSelect.appendChild(option);
+                    });
+                } else {
+                    removeSelect.innerHTML = '<option value="">У пользователя нет книг</option>';
+                }
+            }
+        });
             
             userItem.innerHTML = `
                 <li>
@@ -570,6 +582,30 @@ async function loadUserBooks(username) {
 }
 
 function tabClicked(){
+
+    const tabAdd = document.getElementById('tab-add');
+    const tabRemove = document.getElementById('tab-remove');
+    const addContainer = document.getElementById('button-add-container');
+    const removeContainer = document.getElementById('button-remove-container');
+
+    if (tabAdd && tabRemove) {
+        tabAdd.addEventListener('click', (e) => {
+            e.preventDefault();
+            tabAdd.classList.add('active');
+            tabRemove.classList.remove('active');
+            addContainer.style.display = 'flex';
+            removeContainer.style.display = 'none';
+        });
+
+        tabRemove.addEventListener('click', (e) => {
+            e.preventDefault();
+            tabRemove.classList.add('active');
+            tabAdd.classList.remove('active');
+            addContainer.style.display = 'none';
+            removeContainer.style.display = 'flex';
+        });
+    }
+    
     if (window.location.pathname.includes("Main.html")) {
         const tabFilters = document.getElementById("tab-filters");
         const tabAddBook = document.getElementById("tab-add-book");
@@ -664,6 +700,69 @@ function setDefaultDates() {
 
 // DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
+
+    //Обработчик кнопки "Удалить" книгу у пользователя
+    const btnRemove = document.getElementById('button-remove');
+    if (btnRemove) {
+        btnRemove.addEventListener('click', async () => {
+            const userId = document.getElementById('selected-user-id').value;
+            const bookId = document.getElementById('user-borrowed-books-select').value;
+
+            if (!userId || !bookId) return alert("Выберите пользователя и книгу!");
+
+            try {
+                const response = await fetch(`${API_URL}/users/${userId}/return/${bookId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert("Книга успешно удалена у пользователя!");
+                    loadUsers();
+                } else {
+                    alert("Ошибка при удалении");
+                }
+            } catch (error) {
+                console.error("Ошибка:", error);
+            }
+        });
+    }
+
+    //Экспорт отчета
+    const btnExport = document.getElementById('export-users-csv');
+
+if (btnExport) {
+    btnExport.addEventListener('click', async () => {
+        try {
+            const response = await fetch(`${API_URL}/users`);
+            const users = await response.json();
+
+            let csv = "\uFEFFID;Логин;Книги\n";
+
+            users.forEach(u => {
+                if (u.borrowedBooks && u.borrowedBooks.length > 0) {
+                    
+                    const titles = u.borrowedBooks.map(bookObj => {
+                        return bookObj.title || (bookObj.bookId && bookObj.bookId.title) || "Без названия";
+                    }).join(", ");
+
+                    csv += `${u._id || u.id};${u.username};"${titles}"\n`;
+                }
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "otchet.csv";
+            link.click();
+
+        } catch (err) {
+            console.error(err);
+            alert("Ошибка при чтении данных");
+        }
+    });
+}
+    //Конец экспорта
+
 
     const currentUser = localStorage.getItem('currentUser');
     const userDisplay = document.getElementById('user-display-name');

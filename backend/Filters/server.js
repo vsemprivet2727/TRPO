@@ -218,4 +218,19 @@ app.post('/api/users/borrow', async (req, res) => {
     }
 });
 
+//DELET запрос на удаление книги у пользователя
+app.delete('/api/users/:userId/return/:bookId', async (req, res) => {
+    try {
+        const { userId, bookId } = req.params;
+        const user = await User.findById(userId);
+        
+        user.borrowedBooks = user.borrowedBooks.filter(b => b.bookId.toString() !== bookId);
+        
+        await user.save();
+        res.status(200).json({ message: "Книга возвращена" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 app.listen(3000, () => console.log("Server started on port 3000"));

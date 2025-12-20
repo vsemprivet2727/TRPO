@@ -8,7 +8,6 @@
 </head>
 <body>
     <header class="header">
-        
         <nav class="nav">
             <ul class="nav-list">
                 <li><a href="Main.html"><img src="../resources/navbar/open-book.png" alt="">Книги</a></li>
@@ -30,93 +29,70 @@
                     <a id="tab-remove"><img src="../resources/tabs/minus.png" alt="">Удалить</a>
                 </div>
 
-                <div class="filter-box" style="display: flex; flex-direction: column;"> <div id="selection-info" style="margin-bottom: 10px; padding: 10px; background: #e7f3ff; border-radius: 8px; border: 1px solid #b3d7ff;">
+                <div id="selection-info" style="margin-bottom: 10px; padding: 10px; background: #e7f3ff; border-radius: 8px; border: 1px solid #b3d7ff;">
                     <input type="hidden" id="selected-user-id">
                     <span id="selected-user-name" style="font-weight: bold; color: #0056b3;">👤 Пользователь не выбран</span>
                 </div>
-                <table class="filter-box-table">
-                    <tr>
-                        <td><label for="search-input">Поиск</label></td>
-                        <td><input type="text" id="search-input-name" placeholder="Имя, фамилия..."></td>
-                    </tr>
-                    <tr>
-                        <td><label for="search-input-email">Почта</label></td>
-                        <td><input type="text" name="" id="search-input-email" placeholder="example@mail.com"></td>
-                    </tr>
-                    <tr>
-                        <td><label for="book-name">Книга</label></td>
-                        <td>
-                            <select name="" id="book-select">
-                                <!-- с бд подгрузка-->
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="input-date-start">От</label></td>
-                        <td><input type="date" name="" id="input-date-start"></td>
-                    </tr>
-                    <tr>
-                        <td><label for="input-date-end">До</label></td>
-                        <td><input type="date" id="input-date-end"></td>
-                    </tr>
-                </table>
-                <button class="btn btn-primary" id="button-add">Добавить</button>
+
+                <div id="button-add-container" class="filter-box" style="display: flex; flex-direction: column;">
+                    <table class="filter-box-table">
+                        <tr>
+                            <td><label for="search-input-name">Поиск</label></td>
+                            <td><input type="text" id="search-input-name" class="user-search-name" placeholder="Имя, фамилия..."></td>
+                        </tr>
+                        <tr>
+                            <td><label for="search-input-email">Почта</label></td>
+                            <td><input type="text" id="search-input-email" class="user-search-email" placeholder="example@mail.com"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="book-select">Книга</label></td>
+                            <td>
+                                <select id="book-select">
+                                    </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="input-date-start">От</label></td>
+                            <td><input type="date" id="input-date-start"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="input-date-end">До</label></td>
+                            <td><input type="date" id="input-date-end"></td>
+                        </tr>
+                    </table>
+                    <button class="btn btn-primary" id="button-add">Добавить</button>
+                </div>
+
+                <div id="button-remove-container" class="filter-box" style="display: none; flex-direction: column;">
+                    <table class="filter-box-table">
+                        <tr>
+                            <td><label for="remove-search-name">Поиск</label></td>
+                            <td><input type="text" id="remove-search-name" class="user-search-name" placeholder="Имя, фамилия..."></td>
+                        </tr>
+                        <tr>
+                            <td><label for="remove-search-email">Почта</label></td>
+                            <td><input type="text" id="remove-search-email" class="user-search-email" placeholder="example@mail.com"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="user-borrowed-books-select">Книга юзера</label></td>
+                            <td>
+                                <select id="user-borrowed-books-select">
+                                    <option value="">Сначала выберите пользователя</option>
+                                    </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <button class="btn btn-primary" id="button-remove" style="background-color: #dc3545; margin-top: 10px;">Удалить из списка</button>
+                </div>
             </div>
 
-            <div class="filter-box">
-            <div class="filter-box" style="display: flex;">
-                <table class="filter-box-table">
-                    <tr>
-                        <td><label for="search-input">Поиск</label></td>
-                        <td><input type="text" id="" placeholder="Имя, фамилия..."></td>
-                    </tr>
-                    <tr>
-                        <td><label for="search-input-email">Почта</label></td>
-                        <td><input type="text" name="" id="" placeholder="example@mail.com"></td>
-                    </tr>
-                    <tr>
-                        <td><label for="book-name">Книга</label></td>
-                        <td>
-                            <select name="" id="">
-                                <!-- с бд подгрузка-->
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="input-date-start">От</label></td>
-                        <td><input type="date" name="" id="input-date-start"></td>
-                    </tr>
-                    <tr>
-                        <td><label for="input-date-end">До</label></td>
-                        <td><input type="date" id="input-date-end"></td>
-                    </tr>
-                </table>
-                <button class="btn btn-primary" id="button-remove">Удалить</button>
-            </div>
-            </div>
-            </div>
-        <div class="scroll-box" id="users-scroll-box">
-            <div class="scroll-box-item">
-                <!-- Пользователи -->
-                 <ul id="return-books-list">
-                    <!-- Загрузка из БД -->
-                </ul>
+            <div class="scroll-box" id="users-scroll-box">
+                <div class="scroll-box-item">
+                    <ul id="return-books-list">
+                        </ul>
+                </div>
             </div>
         </div>
-        </div>
-        <!--<div id="userModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Информация о читателе</h2>
-            <div id="modalContent">
-                <p><strong>Имя:</strong> <span id="modalName">Иван</span></p>
-                <p><strong>Фамилия:</strong> <span id="modalSurname">Иванов</span></p>
-                <p><strong>Email:</strong> <span id="modalEmail">ivan@example.com</span></p>
-                <p><strong>Телефон:</strong> <span id="modalPhone">+375 (999) 123-45-67</span></p>
-                <p><strong>Книг на руках:</strong> <span id="modalBooks">3</span></p>
-            </div>-->
-        </div>
-    </div>
     </main>
 
     <script src="../../scripts/script.js"></script>
