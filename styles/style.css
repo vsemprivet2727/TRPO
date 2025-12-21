@@ -161,6 +161,7 @@ main {
 
 .scroll-box {
     list-style: none;
+    max-width: 900px;
     width: 85vw;
     height:80vh;
     padding: 30px 30px;
@@ -178,6 +179,7 @@ main {
     position: absolute;
     z-index: 1000;
     width:75%;
+    max-width: 800px;
     display: flex;
     align-self: center;
     flex-direction: row;
@@ -235,8 +237,7 @@ main {
     flex-direction: column;
     gap: 0px;
     justify-content:baseline;
-    align-items:end;
-    cursor: pointer;
+    align-items:center;
     transition: all 0.5s ease-out;
     overflow: hidden;
 }
@@ -280,27 +281,25 @@ main {
 
 .scroll-box-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     gap: 15px;
     padding: 15px 0px;
-}
-
-.scroll-box-item h2 {
-    color: #333;
-    font-size: 24px;
-    margin: 0 0 20px 0;
-    text-align: center;
-}
-
-.scroll-box-item li {
-    width: 90%;
     background-color: #DCDCDC;
-    border-radius: 100px;
+    aspect-ratio: 2/1;
+    border-radius: 25px;
     padding: 15px 30px;
     text-align: center;
     align-items: left;
 }
+
+.title {
+    color: #333;
+    font-size: 11pt;
+    font-weight: 600;
+    text-align: left;
+}
+
 
 .scroll-box-item img {
     width: 50px;
@@ -376,7 +375,6 @@ main {
     padding: 10px 0px;
     margin: 20px 5px;
     margin-top: 12px;
-    table-layout:auto;
     font-size: 12pt;
 }
 
@@ -411,7 +409,7 @@ main {
     border: solid 1px #DCDCDC;
     background-color: #fff;
     width: 100%;
-    transition: padding 0.3s ease, background-color 0.3s ease, border-radius 0.3s ease, margin 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .filter-box-table select:hover {

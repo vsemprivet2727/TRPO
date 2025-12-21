@@ -26,28 +26,44 @@ function displayBooks(books) {
     if (!scrollBox) return;
     
     if (books.length === 0) {
-        scrollBox.innerHTML += '<p>Книги не найдены</p>';
+        const grid = document.querySelector('.books-grid')
+        if (grid) grid.innerHTML = ''
+        grid.innerHTML = '<div class="scroll-box-item">Книги не найдены</div>';
         return;
     }
 
-    const bookItems = scrollBox.querySelectorAll('.book-card');
-    bookItems.forEach(item => item.remove());
+    const oldGrid = scrollBox.querySelector('.books-grid');
+    if (oldGrid) oldGrid.remove();
 
-    books.forEach(book => {
-        const bookItem = document.createElement('ul');
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'books-grid';
+    gridContainer.style.display = 'grid';
+    gridContainer.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    gridContainer.style.gap = '20px';
+    gridContainer.style.marginTop = '50px';
+    
+    if (books.length === 0) {
+        scrollBox.innerHTML = '<p>Книги не найдены</p>';
+        return;
+    }
+    
+    for(let i = 0; i < books.length; i++) {
+        const bookItem = document.createElement('div');
         bookItem.className = 'scroll-box-item book-card';
         bookItem.innerHTML = `
-            <li style="display: flex; flex-direction: row; justify-content: space-between;">
+            <div style="display: flex; flex-direction: row; justify-content: space-between; width:100%">
                 <div style="display: flex; flex-direction: column; text-align: left;">
-                    <span style="font-weight: bold;">${book.title}</span>
-                    <small>${book.author}</small>
+                    <span class="title">${books[i].title}</span>
+                    <small>${books[i].author}</span>
                 </div>
                 <img src="../resources/Book open.png" alt="Книга">
-            </li>
+            </div>
         `;
-        bookItem.addEventListener('click', () => openBookModal(book));
-        scrollBox.appendChild(bookItem);
-    });
+        bookItem.addEventListener('click', () => openBookModal(books[i]));
+        gridContainer.appendChild(bookItem);
+    }
+    
+    scrollBox.appendChild(gridContainer);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -249,12 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 alert("Книга добавлена!");
                 
-                // Очистить поля ввода после успеха
-                formElementIds.forEach(id => {
-                    document.getElementById(id).value = '';
-                });
-                document.getElementById('new-book-inStock').value = '';
-                loadBooks();
+                location.reload();
             } else {
                 alert("Ошибка при добавлении");
             }
@@ -324,8 +335,7 @@ if (removeButton) {
             if (response.ok) {
                 const result = await response.json();
                 alert('Книга успешно удалена')
-                await loadBooksForRemoval(); 
-                loadBooks();
+                location.reload();
             } else {
                 const errorData = await response.json();
                 alert(`Ошибка: ${errorData.message || response.statusText}`)
@@ -384,7 +394,7 @@ async function applyFilters() {
     if (fPublisher?.value) params.append("publisher", fPublisher.value);
     if (fGenre?.value) params.append("genre", fGenre.value);
     if (fYear?.value) params.append("year", fYear.value);
-    if (fStock?.checked) params.append("inStock", "true");
+    if (fStock?.classList.contains('on')) params.append("inStock", "true");
 
     try {
         const response = await fetch(`${API_URL}/books?` + params.toString());
@@ -425,6 +435,7 @@ async function populateFilters() {
     const fGenre = document.getElementById("genre-select");
 
     if (!fAuthor || !fPublisher || !fGenre) return;
+    console.log(fAuthor, fPublisher, fGenre);
 
     try {
         const response = await fetch(`${API_URL}/books`);
@@ -475,11 +486,6 @@ async function loadUsers() {
     
 
     const scrollBox = document.getElementById('users-scroll-box');
-    scrollBox.innerHTML = `
-        <div class="scroll-box-item">
-            <h2>Список читателей</h2>
-        </div>
-    `;
      try {
         const nameInputEl = document.getElementById('search-input-name');
         const emailInputEl = document.getElementById('search-input-email');
@@ -503,20 +509,19 @@ async function loadUsers() {
         if (!response.ok) throw new Error('Ошибка загрузки пользователей');
 
         const users = await response.json();
-        scrollBox.innerHTML = `
-            <div class="scroll-box-item">
-                <h2>Список читателей</h2>
-            </div>
-        `;
+
         if (users.length === 0) {
             scrollBox.innerHTML += '<p style="padding:10px;">Пользователи не найдены</p>';
             return;
         }
-
+        const userList = document.createElement('div');
+        userList.style.marginTop = '40px'; 
         users.forEach(user => {
-            const userItem = document.createElement('ul');
+            const userItem = document.createElement('div');
             userItem.className = 'scroll-box-item user-card';
+            userItem.style.margin = '10px';
             userItem.style.cursor = 'pointer';
+            userItem.style.aspectRatio = '3/1';
 
             userItem.addEventListener('click', () => {
                 document.getElementById('selected-user-id').value = user._id;
@@ -539,8 +544,8 @@ async function loadUsers() {
         });
             
             userItem.innerHTML = `
-                <li>
-                    <strong>${user.username}</strong> (${user.email})<br>
+                <div style="display: flex; flex-direction: column; width: 100%">
+                    <div><strong>${user.username}</strong> (${user.email})</div>
                     Взятые книги: ${
                 user.borrowedBooks && user.borrowedBooks.length > 0 
                 ? user.borrowedBooks.map(b => 
@@ -550,10 +555,11 @@ async function loadUsers() {
                 ).join(", ")
                 : "Книг нет"
         }
-                </li>
+                </div>
             `;
 
-            scrollBox.appendChild(userItem);
+            userList.appendChild(userItem);
+            scrollBox.appendChild(userList);
         });
 
     } catch (err) {
@@ -608,29 +614,23 @@ async function loadUserBooks(username) {
 function searchClicked() {
     const search = document.getElementById('search-container');
     const filter = document.getElementById('filter-container');
-    const table = document.getElementById('filters-table')
     const input = document.getElementById('input-search');
-    const btn = document.getElementById('reset-filters-btn')
+
     if(search.classList.contains('active')) 
         input.focus();
     else {
         search.classList.add('active');
         filter.classList.remove('active');
-        table.style.display = 'none';
-        btn.style.display = 'none';
     }
 }
+
+let filtersInitialized = false;
 function filtersClicked(){
     const filter = document.getElementById('filter-container');
     const search = document.getElementById('search-container');
-    const table = document.getElementById('filters-table');
-    const btn = document.getElementById('reset-filters-btn')
 
     filter.classList.add('active');
-    table.style.display = 'flex';
-    btn.style.display = 'flex';
     search.classList.remove('active');
-
 }
 function openAddBook() {
     const window = document.getElementById('add-book');
@@ -658,7 +658,7 @@ function closeRemoveBook() {
 }
 
 function inStockClicked() {
-    const thumblerBtn = document.getElementById('thumbler-btn');
+    const thumblerBtn = document.getElementById('checkbox-is-we-have');
     if(thumblerBtn.classList.contains('on')) thumblerBtn.classList.remove('on');
     else thumblerBtn.classList.add('on')
 }
@@ -768,18 +768,6 @@ function setDefaultDates() {
         endInput.value = nextWeek.toISOString().split('T')[0];
     }
 }
-
-/* async function expandMenu() {
-    //!!!!!!!
-    const menu = document.getElementById('expanded-menu');
-    if (menu.classList.contains('active')) {
-        menu.classList.remove('active');
-    } else {
-        menu.classList.add('active');
-    }
-}*/
-
-
 
 async function loadWishlists() {
     const listContainer = document.getElementById('return-books-list');
@@ -922,14 +910,12 @@ if (btnExport) {
         userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${storedUser}`;
     }
 
-   if (path.includes("Main.html") || path.includes("Books.html")) {
-        if (document.getElementById('books-scroll-box')) {
-            loadBooks();
-            populateFilters();
-        }
+    if (path.includes("Main.html") || path.includes("Books.html")) {
+        loadBooks();
+        populateFilters();
     }
 
-    if (path.includes("Users.html")) {
+    if (path.includes("/Users.html")) {
         const usersBox = document.getElementById("users-scroll-box");
         
         if (usersBox) {

@@ -11,7 +11,7 @@
         <nav class="nav">
             <ul class="nav-list">
                 <li><a href="Main.html"><img src="../resources/navbar/open-book.png" alt="">Книги</a></li>
-                <li><a href="ReturnBooks.html"><img src="../resources/navbar/book.png" alt="">Запросы книг</a></li>
+                <li><a href="RequestBooks.html"><img src="../resources/navbar/book.png" alt="">Запросы книг</a></li>
                 <li><a href="#" class="active"><img src="../resources/navbar/user.png" alt="">Пользователи</a></li>  
             </ul>
         </nav>
@@ -23,16 +23,14 @@
     
     <main>
         <div class="flexscroll-box">
-            <div class="flex-column">
-                <div class="tabs nav-list" style="justify-content: left;">
-                    <a id="tab-add" class="active"><img src="../resources/tabs/add.png" alt="">Добавить</a>
-                    <a id="tab-remove"><img src="../resources/tabs/minus.png" alt="">Удалить</a>
+            <div class="scroll-box" id="users-scroll-box">
+                <div class="top-panel">
+                <div class="search active" id="search-container" onclick="searchClicked()">
+                    <img src="../resources/search.png" alt="">
+                    <input type="text" id="input-search">
                 </div>
-
-                <div id="selection-info" style="margin-bottom: 10px; padding: 10px; background: #e7f3ff; border-radius: 8px; border: 1px solid #b3d7ff;">
-                    <input type="hidden" id="selected-user-id">
-                    <span id="selected-user-name" style="font-weight: bold; color: #0056b3;">👤 Пользователь не выбран</span>
-                </div>
+                <div class="filters" id="filter-container" onclick="filtersClicked()">
+                    <img src="../resources/tabs/add.png" alt="" width="18px" height="18px" style="cursor: pointer; margin-top: 1px;">
 
                 <div id="button-add-container" class="filter-box" style="display: flex; flex-direction: column;">
                     <table class="filter-box-table">
@@ -60,44 +58,20 @@
                             <td><input type="date" id="input-date-end"></td>
                         </tr>
                     </table>
-                    <button class="btn btn-primary" id="button-add">Добавить</button>
-                    <div style="margin-top: 20px; text-align: center;">
-                         <button class="btn btn-primary" id="export-users-csv" style="background-color: #28a745;">
+                    <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                        <div style="display: flex; flex-direction: row; width:100%; gap: 5px;">
+                            <button class="btn btn-primary" id="button-add">Добавить</button>
+                            <button class="btn btn-primary" id="export-users-csv" style="display:flex; align-items: center;">
                             <img src="../resources/navbar/open-book.png" alt="" style="width: 16px; margin-right: 5px;"> 
-                            Экспорт должников (CSV)
+                            Экспорт должников
                         </button>
+                        <button class="btn btn-primary" id="reset-filters-btn">Сбросить</button>
                     </div>
                 </div>
-
-                <div id="button-remove-container" class="filter-box" style="display: none; flex-direction: column;">
-                    <table class="filter-box-table">
-                        <tr>
-                            <td><label for="remove-search-name">Поиск</label></td>
-                            <td><input type="text" id="remove-search-name" class="user-search-name" placeholder="Имя, фамилия..."></td>
-                        </tr>
-                        <tr>
-                            <td><label for="remove-search-email">Почта</label></td>
-                            <td><input type="text" id="remove-search-email" class="user-search-email" placeholder="example@mail.com"></td>
-                        </tr>
-                        <tr>
-                            <td><label for="user-borrowed-books-select">Книга юзера</label></td>
-                            <td>
-                                <select id="user-borrowed-books-select">
-                                    <option value="">Сначала выберите пользователя</option>
-                                    </select>
-                            </td>
-                        </tr>
-                    </table>
-                    <button class="btn btn-primary" id="button-remove" style="background-color: #dc3545; margin-top: 10px;">Удалить из списка</button>
                 </div>
+                </div>  
             </div>
 
-            <div class="scroll-box" id="users-scroll-box">
-                <div class="scroll-box-item">
-                    <ul id="return-books-list">
-                        </ul>
-                </div>
-            </div>
         </div>
     </main>
 

@@ -12,7 +12,7 @@
         <nav class="nav">
             <ul class="nav-list">
                 <li><a href="#" class="active"><img src="../resources/navbar/open-book.png" alt="">Книги</a></li>
-                <li><a href="ReturnBooks.html"><img src="../resources/navbar/book.png" alt="">Запросы книг</a></li>
+                <li><a href="RequestBooks.html"><img src="../resources/navbar/book.png" alt="">Запросы книг</a></li>
                 <li><a href="Users.html"><img src="../resources/navbar/user.png" alt="">Пользователи</a></li>
             </ul>
         </nav>
@@ -43,56 +43,6 @@
     
     <main>
         <div class="flexscroll-box">
-            <div class="modal-box" id="filters" style="display: none;">
-                <table class="filter-box-table">
-                    <tr>
-                        <td><label for="checkbox-is-we-have">В наличии</label></td>
-                        <td>
-                            <input type="checkbox" name="is-we-have" id="checkbox-is-we-have">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="genre-select" >Жанр</label></td>
-                        <td>
-                             <select id="genre-select">
-                                <!-- с бд подгрузка-->
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="publisher-select">Издатель</label></td>
-                        <td>
-                            <select id="publisher-select">
-                                <!-- с бд подгрузка-->
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="author-select">Автор</label></td>
-                        <td>
-                            <select id="author-select">
-                                <!-- с бд подгрузка-->
-                            </select>
-                        </td>
-                    </tr>
-                <!--<tr>
-                        <td><label for="select-lang">Язык</label></td>
-                        <td>
-                            <select name="" id="select-lang">
-                                
-                            </select>
-                        </td>
-                     --></tr>
-                    <tr>
-                        <td><label for="input-year">Год</label></td>
-                        <td><input type="text" name="input-year" id="input-year" placeholder=""></td>
-                    </tr>
-                    <!--<tr>
-                        <td><label for="input-pages">Количество страниц</label></td>
-                        <td><input type="text" id="input-pages"></td>
-                    </tr>-->
-                </table>
-            </div>
             <div class="modal-box" id="add-book" style="display: none;">
                 <h3 align="center">Добавить книгу</h1>
                     <form action="">
@@ -157,19 +107,19 @@
         </div>
         
         <div class="scroll-box" id="books-scroll-box">
-<div class="top-panel">
+            <div class="top-panel">
                 <div class="search active" id="search-container" onclick="searchClicked()">
                     <img src="../resources/search.png" alt="">
                     <input type="text" id="input-search">
                 </div>
                 <div class="filters" id="filter-container" onclick="filtersClicked()">
-                    <img src="../resources/tabs/filter.png" alt="" width="18px" height="18px" onclick="filterClicked()">
-                <table class="filter-box-table" id="filters-table" style="display: none;">
+                    <img src="../resources/tabs/filter.png" alt="" width="18px" height="18px" style="cursor: pointer;">
+                <table class="filter-box-table" id="filters-table">
                     <tr>
                         <td><label for="checkbox-is-we-have">В наличии</label></td>
                         <td>
                             <div class="in-stock-thumbler" onclick="inStockClicked()" id="thumbler">
-                                <div class="in-stock-thumbler-btn" id="thumbler-btn"></div>
+                                <div id="checkbox-is-we-have" class="in-stock-thumbler-btn"></div>
                             </div>
                         </td>
                     </tr>
@@ -197,30 +147,14 @@
                             </select>
                         </td>
                     </tr>
-                <!--<tr>
-                        <td><label for="select-lang">Язык</label></td>
-                        <td>
-                            <select name="" id="select-lang">
-                                
-                            </select>
-                        </td>
-                     --></tr>
                     <tr>
                         <td><label for="input-year">Год</label></td>
                         <td><input type="text" name="input-year" id="input-year" placeholder=""></td>
                     </tr>
-                    <!--<tr>
-                        <td><label for="input-pages">Количество страниц</label></td>
-                        <td><input type="text" id="input-pages"></td>
-                    </tr>-->
                 </table>
-                <button class="btn btn-primary" style="place-self: center; display: none;" id="reset-filters-btn">Сбросить</button>
+                <button class="btn btn-primary" id="reset-filters-btn">Сбросить</button>
                 </div>
                 </div>            
-            <!-- <div><img src="../resources/tabs/filter.png" alt="" width="18px" height="18px" onclick="filtersClicked()"></div> -->
-            <div class="scroll-box-item">
-                
-            </div>
         </div>
         </div>
     <div id="bookModal" class="modal">
