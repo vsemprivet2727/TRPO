@@ -12,23 +12,33 @@
         <nav class="nav">
             <ul class="nav-list">
                 <li><a href="#" class="active"><img src="../resources/navbar/open-book.png" alt="">Книги в библиотеке</a></li>
+                <li><a href="Waiting.html"><img src="../resources/navbar/time-left.png" alt="">В обработке</a></li>
                 <li><a href="UsersBooks.html"><img src="../resources/navbar/user.png" alt="">Книги у Вас</a></li>
             </ul>
         </nav>
         
         <div class="header-buttons">
-            <a href="" class="btn-login"><img src="../resources/User.png" alt="">Профиль</a>
+            <a href="" class="btn-login" id="user-display-name"><img src="../resources/User.png" alt="">Профиль</a>
         </div>
     </header>
     
     <main>
         <div class="flexscroll-box">
-      <div class="filter-box" id="filters" style="display: flex;">
-                <table class="filter-box-table">
+        <div class="scroll-box" id="books-scroll-box">
+                        <div class="top-panel">
+                <div class="search active" id="search-container" onclick="searchClicked()">
+                    <img src="../resources/search.png" alt="">
+                    <input type="text" id="input-search">
+                </div>
+                <div class="filters" id="filter-container" onclick="filtersClicked()">
+                    <img src="../resources/tabs/filter.png" alt="" width="18px" height="18px" style="cursor: pointer;">
+                <table class="filter-box-table" id="filters-table">
                     <tr>
                         <td><label for="checkbox-is-we-have">В наличии</label></td>
                         <td>
-                            <input type="checkbox" name="is-we-have" id="checkbox-is-we-have">
+                            <div class="in-stock-thumbler" onclick="inStockClicked()" id="thumbler">
+                                <div id="checkbox-is-we-have" class="in-stock-thumbler-btn"></div>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -61,8 +71,8 @@
                     </tr>
                 </table>
                 <button class="btn btn-primary" id="reset-filters-btn">Сбросить</button>
-            </div>
-        <div class="scroll-box" id="books-scroll-box">
+                </div>
+                </div>  
         </div>
         </div>
     <div id="bookModal" class="modal">
@@ -75,7 +85,7 @@
                 <p><strong>Год:</strong> <span id="modalYear"></span></p>
                 <p><strong>Жанр:</strong> <span id="modalGenre"></span></p>
                 <p><strong>Издатель:</strong> <span id="modalPublisher"></span></p>
-                <button class="btn btn-primary">Запросить</button>
+                <button class="btn btn-primary" style="background-color: #fdefd9;">Запросить</button>
             </div>
         </div>
     </div>

@@ -518,7 +518,7 @@ async function loadUsers() {
         userList.style.marginTop = '40px'; 
         users.forEach(user => {
             const userItem = document.createElement('div');
-            userItem.className = 'scroll-box-item user-card';
+            userItem.className = 'scroll-box-item';
             userItem.style.margin = '10px';
             userItem.style.cursor = 'pointer';
             userItem.style.aspectRatio = '3/1';
@@ -580,14 +580,8 @@ async function loadUserBooks(username) {
         
         const books = await response.json();
 
-        scrollBox.innerHTML = `
-            <div class="scroll-box-item">
-                <h2>Книги у Вас</h2>
-            </div>
-        `;
-
         if (books.length === 0) {
-            scrollBox.innerHTML += '<div class="scroll-box-item"><p>У вас пока нет взятых книг.</p></div>';
+            scrollBox.innerHTML += '<div style="display:flex; justify-content:center;"><h1>У вас пока нет взятых книг.</h1></div>';
             return;
         }
 
@@ -609,6 +603,14 @@ async function loadUserBooks(username) {
         });
     } catch (error) {
         console.error('Ошибка загрузки личных книг: ', error);
+    }
+}
+
+async function loadWaitingBooks() {
+    try {
+        
+    } catch (error) {
+        console.log('Ошибка: ', error)
     }
 }
 function searchClicked() {
@@ -662,97 +664,7 @@ function inStockClicked() {
     if(thumblerBtn.classList.contains('on')) thumblerBtn.classList.remove('on');
     else thumblerBtn.classList.add('on')
 }
-/* function tabClicked(){
 
-    const tabAdd = document.getElementById('tab-add');
-    const tabRemove = document.getElementById('tab-remove');
-    const addContainer = document.getElementById('button-add-container');
-    const removeContainer = document.getElementById('button-remove-container');
-
-    if (tabAdd && tabRemove) {
-        tabAdd.addEventListener('click', (e) => {
-            e.preventDefault();
-            tabAdd.classList.add('active');
-            tabRemove.classList.remove('active');
-            addContainer.style.display = 'flex';
-            removeContainer.style.display = 'none';
-        });
-
-        tabRemove.addEventListener('click', (e) => {
-            e.preventDefault();
-            tabRemove.classList.add('active');
-            tabAdd.classList.remove('active');
-            addContainer.style.display = 'none';
-            removeContainer.style.display = 'flex';
-        });
-    }
-    
-    if (window.location.pathname.includes("Main.html")) {
-        const tabFilters = document.getElementById("tab-filters");
-        const tabAddBook = document.getElementById("tab-add-book");
-        const tabRemoveBook = document.getElementById("tab-remove-book");
-
-        if (tabFilters) {
-        tabFilters.addEventListener("click", (e) => {
-            e.preventDefault();
-            document.getElementById("filters").style.display = "flex";
-            document.getElementById("add-book").style.display = "none";
-            document.getElementById('remove-book').style.display = 'none';
-            tabFilters.classList.add('active');
-            tabAddBook.classList.remove('active');
-            tabRemoveBook.classList.remove('active');
-        });
-    }
-
-    if (tabAddBook) {
-        tabAddBook.addEventListener("click", (e) => {
-            e.preventDefault();
-            document.getElementById("add-book").style.display = "flex";
-            document.getElementById("filters").style.display = "none";
-            document.getElementById('remove-book').style.display = 'none'
-            tabAddBook.classList.add('active');
-            tabFilters.classList.remove('active');
-            tabRemoveBook.classList.remove('active');
-        });
-    }
-
-    if (tabRemoveBook) {
-        tabRemoveBook.addEventListener("click", (e) => {
-            e.preventDefault();
-            document.getElementById("remove-book").style.display = "flex";
-            document.getElementById("add-book").style.display = "none";
-            document.getElementById("filters").style.display = "none";
-            tabRemoveBook.classList.add('active');
-            tabFilters.classList.remove('active');
-            tabAddBook.classList.remove('active');
-    });
-    }
-}
-    if(window.location.pathname.includes("Users.html")) {
-        const tabAdd = document.getElementById('tab-add');
-        const tabRemove = document.getElementById('tab-remove');
-
-        if(tabRemove) {
-            tabRemove.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.getElementById('button-add').style.display = 'none';
-                document.getElementById('button-remove').style.display = 'flex';
-                tabRemove.classList.add('active');
-                tabAdd.classList.remove('active');
-            });
-        if(tabAdd) {
-                tabAdd.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.getElementById('button-add').style.display = 'flex';
-                document.getElementById('button-remove').style.display = 'none';
-                tabAdd.classList.add('active');
-                tabRemove.classList.remove('active');
-            });
-        }
-    }
-}
-}
- */
 // Функция для установки дат по умолчанию
 function setDefaultDates() {
     const startInput = document.getElementById('input-date-start');
@@ -770,7 +682,7 @@ function setDefaultDates() {
 }
 
 async function loadWishlists() {
-    const listContainer = document.getElementById('return-books-list');
+    const listContainer = document.getElementById('users-request-scroll-box');
     
     try {
         const [usersRes, booksRes] = await Promise.all([
@@ -788,24 +700,25 @@ async function loadWishlists() {
         const usersWithRequests = users.filter(user => user.wishlist && user.wishlist.length > 0);
 
         if (usersWithRequests.length === 0) {
-            listContainer.innerHTML = '<li>Запросов пока нет</li>';
+            listContainer.innerHTML = '<h1>Запросов пока нет</h1>';
             return;
         }
 
         usersWithRequests.forEach(user => {
-            const li = document.createElement('li');
-            li.className = 'scroll-box-item';
-            li.style.marginBottom = '20px';
-            li.style.padding = '15px';
-            li.style.borderBottom = '1px solid #ccc';
-            li.style.listStyle = 'none';
+            const item = document.createElement('div');
+            item.className = 'scroll-box-item';
+            item.style.margin = '10px';
+            item.style.aspectRatio = '3/1';
+            item.style.display = 'flex';
+            item.style.flexDirection = 'column'
+            item.style.justifyContent = 'center';
 
             const booksHtml = user.wishlist.map(wishId => {
                 const bookData = allBooks.find(b => (b._id === wishId || b.id === wishId));
                 
                 if (bookData) {
                     return `
-                        <div style="margin-left: 20px; color: #555; margin-bottom: 5px;">
+                        <div style="margin-left: 20px; color: #555;">
                             <span><strong>${bookData.title}</strong> — ${bookData.author}</span>
                         </div>
                     `;
@@ -814,8 +727,8 @@ async function loadWishlists() {
                 }
             }).join('');
 
-            li.innerHTML = `
-                <div style="font-size: 1.1rem; font-weight: bold; color: #007bff; margin-bottom: 8px;">
+            item.innerHTML = `
+                <div style="font-size: 1.1rem; font-weight: bold; color: #000;">
                     ${user.username} (${user.email})
                 </div>
                 <div class="user-books-request">
@@ -823,7 +736,7 @@ async function loadWishlists() {
                 </div>
             `;
             
-            listContainer.appendChild(li);
+            listContainer.appendChild(item);
         });
 
     } catch (error) {
@@ -931,12 +844,12 @@ if (btnExport) {
         }
     }
 
-    if (path.includes("UsersBooks.html")) {
+    if (path.includes("UserPages")) {
         if (currentUser && userDisplay) {
         userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${currentUser}`;
     }
         if (currentUser) {
-            if (document.querySelector('.scroll-box')) {
+            if (document.getElementById('user-books-scroll-box')) {
                 loadUserBooks(currentUser);
             }
         } else {
@@ -948,7 +861,7 @@ if (btnExport) {
         initModal();
     }
 
-    if (document.getElementById('return-books-list')) {
+    if (document.getElementById('users-request-scroll-box')) {
         loadWishlists();
     }
 
