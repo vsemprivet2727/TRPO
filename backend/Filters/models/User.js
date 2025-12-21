@@ -25,7 +25,8 @@ const userSchema = new mongoose.Schema({
   wishlist: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Book'
-  }]
+  }],
+  isSuperUser: {type:Boolean, default: false}
 });
 
 const User = mongoose.model("User", userSchema);

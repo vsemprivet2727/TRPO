@@ -581,7 +581,7 @@ async function loadUserBooks(username) {
         const books = await response.json();
 
         if (books.length === 0) {
-            scrollBox.innerHTML += '<div style="display:flex; justify-content:center;"><h1>У вас пока нет взятых книг.</h1></div>';
+            scrollBox.innerHTML += '<div style="display:flex; justify-content:center;"><h1>У вас нет взятых книг.</h1></div>';
             return;
         }
 
@@ -606,9 +606,33 @@ async function loadUserBooks(username) {
     }
 }
 
-async function loadWaitingBooks() {
+async function loadWaitingBooks(username) {
     try {
-        
+        const response = await fetch(`${API_URL}/user-wishlist?username=${username}`);
+        console.log(response)
+        if (!response.ok) throw new Error('Ошибка со стороны сервера: ', response.status)
+        else {
+            const requestedBooks = await response.json();
+            const scrollBox = document.getElementById('waiting-books-scroll-box');
+            if (requestedBooks.length>0) {
+                requestedBooks.forEach(book => {
+                const item = document.createElement('div');
+                item.className = 'scroll-box-item';
+                item.style.aspectRatio = '7/1'
+                item.innerHTML = `
+                <div style="display: flex; flex-direction: row; justify-content: space-between; width:100%">
+                    <div style="display: flex; flex-direction: column; text-align: left;">
+                        <span class="title">${book.title}</span>
+                        <small>${book.author}</span>
+                    </div>
+                    <img src="../resources/Book open.png" alt="Книга">
+                </div>
+                `;
+                scrollBox.appendChild(item);
+                });
+            }
+            else scrollBox.innerHTML = `<h1>Нет заявок на книги</h1>`;
+        }
     } catch (error) {
         console.log('Ошибка: ', error)
     }
@@ -626,7 +650,6 @@ function searchClicked() {
     }
 }
 
-let filtersInitialized = false;
 function filtersClicked(){
     const filter = document.getElementById('filter-container');
     const search = document.getElementById('search-container');
@@ -663,6 +686,18 @@ function inStockClicked() {
     const thumblerBtn = document.getElementById('checkbox-is-we-have');
     if(thumblerBtn.classList.contains('on')) thumblerBtn.classList.remove('on');
     else thumblerBtn.classList.add('on')
+}
+
+function logOut() {
+    const loginBtn = document.getElementById('user-display-name');
+    loginBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const answer = confirm('Вы уверены что хотите выйти с аккаунта?')
+        if (answer == true) {
+            localStorage.removeItem('currentUser')
+            window.location.href('UserPages/Books.html');
+        }
+    })
 }
 
 // Функция для установки дат по умолчанию
@@ -845,12 +880,14 @@ if (btnExport) {
     }
 
     if (path.includes("UserPages")) {
+        logOut();
         if (currentUser && userDisplay) {
         userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${currentUser}`;
     }
         if (currentUser) {
             if (document.getElementById('user-books-scroll-box')) {
                 loadUserBooks(currentUser);
+                
             }
         } else {
             window.location.href = '../Auth.html'; 
@@ -863,6 +900,10 @@ if (btnExport) {
 
     if (document.getElementById('users-request-scroll-box')) {
         loadWishlists();
+    }
+
+    if (document.getElementById('waiting-books-scroll-box')){
+        loadWaitingBooks(currentUser);
     }
 
     const btnAddBookToUser = document.getElementById('button-add');

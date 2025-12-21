@@ -1,3 +1,5 @@
+
+
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('form').forEach(form => {
         const box = form.querySelector('.auth-box');
@@ -37,10 +39,9 @@ loginForm.addEventListener('submit', async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            localStorage.setItem('username', data.username); 
-            
-            alert('Вход выполнен успешно!');
-            window.location.href = 'Main.html';
+            localStorage.setItem('currentUser', data.username); 
+            if (data.role === true) window.location.href = 'LibrarianPages/Main.html';
+            else window.location.href = 'UserPages/Books.html';
         } else {
             alert(data.message || 'Ошибка входа');
         }

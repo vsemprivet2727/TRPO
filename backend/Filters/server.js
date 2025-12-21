@@ -154,7 +154,7 @@ app.post("/api/login", async (req, res) => {
         const user = await User.findOne({ username: username, password: password });
 
         if (user) {
-            res.json({ username: user.username });
+            res.json({ username: user.username, role: user.isSuperUser });
         } else {
             res.status(401).json({ message: "Логин или пароль неверны" });
         }
@@ -195,6 +195,31 @@ app.get("/api/user-books", async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+app.get("/api/user-wishlist", async (req, res) => {
+    try {
+        console.log("QUERY:", req.query);
+
+        const username = req.query.username?.toString().trim();
+        if (!username) {
+            return res.status(400).json({ message: "Username не указан" });
+        }
+
+        const user = await User.findOne({
+            username: { $regex: `^${username}$`, $options: "i" }
+        }).populate("wishlist");
+
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+
+            res.json(user.wishlist);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: err.message });
+        }
+});
+
 
 app.post('/api/users/borrow', async (req, res) => {
     const { userId, bookId, borrowedDate, returnDate } = req.body;
