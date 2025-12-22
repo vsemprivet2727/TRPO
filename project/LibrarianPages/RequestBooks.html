@@ -29,15 +29,20 @@
 
         </div>
         </div>
-        <div id="successModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Успешно!</h2>
-            <dialog id="modal">
-
-            </dialog>
-        </div>
-    </div>
+        <dialog id="modal" class="modal-box">
+            <span class="close" onclick="modalClose()">&times;</span>
+            <table class="filter-box-table">
+                <tr>
+                    <td>От</td>
+                    <td><input type="date" name="" id="input-date-start"></td>
+                </tr>
+                <tr>
+                    <td>До</td>
+                    <td><input type="date" name="" id="input-date-end"></td>
+                </tr>
+            </table>
+            <button class="btn btn-primary">Подтвердить</button>
+        </dialog>
     </main>
 
     <script src="../../scripts/script.js"></script>

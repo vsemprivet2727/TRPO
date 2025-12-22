@@ -21,7 +21,7 @@ app.delete("/api/books/:id", async (req, res) => {
     const bookId = req.params.id;
     
     if (!mongoose.Types.ObjectId.isValid(bookId)) {
-        return res.status(400).json({ message: "Некорректный формат ID книги." });
+        return res.status(400).json({ message: "Некорректный формат ID книги." });cd
     }
     const bookObjectId = new mongoose.Types.ObjectId(bookId);
 

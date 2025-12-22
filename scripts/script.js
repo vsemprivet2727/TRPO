@@ -785,6 +785,16 @@ function logOut() {
     })
 }
 
+function modalOpen(book) {
+    const modal = document.getElementById('modal');
+    modal.showModal();
+}
+
+function modalClose(){
+    const modal = document.getElementById('modal');
+    modal.close();
+}
+
 // Функция для установки дат по умолчанию
 function setDefaultDates() {
     const startInput = document.getElementById('input-date-start');
@@ -826,22 +836,27 @@ async function loadWishlists() {
 
         usersWithRequests.forEach(user => {
             const item = document.createElement('div');
-            item.onclick = 'openModal()';
             item.className = 'scroll-box-item';
             item.style.margin = '10px';
             item.style.aspectRatio = '3/1';
             item.style.display = 'flex';
             item.style.flexDirection = 'column'
             item.style.justifyContent = 'center';
+            item.style.background = 'none';
+            item.style.boxShadow = '0 0 10px #000000a1';
 
             const booksHtml = user.wishlist.map(wishId => {
                 const bookData = allBooks.find(b => (b._id === wishId || b.id === wishId));
                 
                 if (bookData) {
+                    
                     return `
-                        <div style="margin-left: 20px; color: #555;">
-                            <span><strong>${bookData.title}</strong> — ${bookData.author}</span>
-                        </div>
+                            <table class="filter-box-table" style="flex: 0 0 90%; table-layout:fixed;">
+                                <tr>
+                                    <td style="width:400px;"><strong>${bookData.title}</strong><br>${bookData.author}</td>
+                                    <td style="display:flex; justify-content:right; align-items:center;"><button id="give-btn" class="btn btn-primary" style="background-color:#ffffff">Одобрить</button></td>
+                                </tr>
+                            </table>
                     `;
                 } else {
                     return `<div style="margin-left: 20px; color: #999;">Книга удалена или не найдена (ID: ${wishId})</div>`;
@@ -852,11 +867,22 @@ async function loadWishlists() {
                 <div style="font-size: 1.1rem; font-weight: bold; color: #000;">
                     ${user.username} (${user.email})
                 </div>
-                <div class="user-books-request">
+                <div>
                     ${booksHtml}
                 </div>
             `;
-            
+
+            item.querySelectorAll('.btn-primary').forEach((btn, index) => {
+            const wishId = user.wishlist[index];
+            const bookData = allBooks.find(b => b._id === wishId || b.id === wishId);
+
+            if (bookData) {
+                    btn.addEventListener('click', () => {
+                        modalOpen(bookData);
+                    });
+                }
+            });
+
             listContainer.appendChild(item);
         });
 
@@ -973,10 +999,10 @@ if (btnExport) {
         if (currentUser) {
             if (document.getElementById('user-books-scroll-box')) {
                 loadUserBooks(currentUser);
-                
             }
-        } else {
-            window.location.href = '../Auth.html'; 
+        } else  if (path.includes('UsersBooks.html') || path.includes('Waiting.html')) {
+            const answer = confirm('Вы не вошли в аккаунт. Хотите войти?')
+            if(answer == true) window.location.href = '../Auth.html'; 
         }
     }
 
@@ -990,6 +1016,7 @@ if (btnExport) {
 
     if (document.getElementById('waiting-books-scroll-box')){
         loadWaitingBooks(currentUser);
+        setDefaultDates();
     }
 
     const btnAddBookToUser = document.getElementById('button-add');
