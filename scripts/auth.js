@@ -102,10 +102,10 @@ function togglePassword(passwordID, iconID) {
             passwordInput.setAttribute('type', type);
             
             if (type === 'password') {
-                eyeIcon.src = '../resources/Eye_off.png';
+                eyeIcon.src = 'resources/Eye_off.png';
                 eyeIcon.alt = 'Показать пароль';
             } else {
-                eyeIcon.src = '../resources/Eye.png';
+                eyeIcon.src = 'resources/Eye.png';
                 eyeIcon.alt = 'Скрыть пароль';
             }
         });

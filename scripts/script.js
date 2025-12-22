@@ -483,8 +483,6 @@ function setupFilterListeners() {
 }
 
 async function loadUsers() {
-    
-
     const scrollBox = document.getElementById('users-scroll-box');
      try {
         const nameInputEl = document.getElementById('search-input-name');
@@ -517,49 +515,51 @@ async function loadUsers() {
         const userList = document.createElement('div');
         userList.style.marginTop = '40px'; 
         users.forEach(user => {
-            const userItem = document.createElement('div');
-            userItem.className = 'scroll-box-item';
-            userItem.style.margin = '10px';
-            userItem.style.cursor = 'pointer';
-            userItem.style.aspectRatio = '3/1';
+            if (user.username != 'admin') {
+                const userItem = document.createElement('div');
+                userItem.className = 'scroll-box-item';
+                userItem.style.margin = '10px';
+                userItem.style.cursor = 'pointer';
+                userItem.style.aspectRatio = '3/1';
 
-            userItem.addEventListener('click', () => {
-                document.getElementById('selected-user-id').value = user._id;
-                document.getElementById('selected-user-name').textContent = `👤 Выбран: ${user.username}`;
+                userItem.addEventListener('click', () => {
+                    document.getElementById('selected-user-id').value = user._id;
+                    document.getElementById('selected-user-name').textContent = `👤 Выбран: ${user.username}`;
 
-            const removeSelect = document.getElementById('user-borrowed-books-select');
-            if (removeSelect) {
-                removeSelect.innerHTML = '<option value="">Выберите книгу для удаления</option>';
-                if (user.borrowedBooks && user.borrowedBooks.length > 0) {
-                    user.borrowedBooks.forEach(b => {
-                        const option = document.createElement('option');
-                        option.value = b.bookId._id || b.bookId; 
-                        option.textContent = b.bookId.title || "Книга без названия";
-                        removeSelect.appendChild(option);
+                    const removeSelect = document.getElementById('user-borrowed-books-select');
+                    if (removeSelect) {
+                        removeSelect.innerHTML = '<option value="">Выберите книгу для удаления</option>';
+                        if (user.borrowedBooks && user.borrowedBooks.length > 0) {
+                            user.borrowedBooks.forEach(b => {
+                                const option = document.createElement('option');
+                                option.value = b.bookId._id || b.bookId; 
+                                option.textContent = b.bookId.title || "Книга без названия";
+                                removeSelect.appendChild(option);
+                            });
+                        } else {
+                            removeSelect.innerHTML = '<option value="">У пользователя нет книг</option>';
+                        }
+                    }
                     });
-                } else {
-                    removeSelect.innerHTML = '<option value="">У пользователя нет книг</option>';
-                }
-            }
-        });
-            
-            userItem.innerHTML = `
-                <div style="display: flex; flex-direction: column; width: 100%">
-                    <div><strong>${user.username}</strong> (${user.email})</div>
-                    Взятые книги: ${
-                user.borrowedBooks && user.borrowedBooks.length > 0 
-                ? user.borrowedBooks.map(b => 
-                    b.bookId 
-                        ? b.bookId.title + " (до " + new Date(b.returnDate).toLocaleDateString() + ")"
-                        : "Книга удалена или не найдена"
-                ).join(", ")
-                : "Книг нет"
-        }
-                </div>
-            `;
 
-            userList.appendChild(userItem);
-            scrollBox.appendChild(userList);
+                    userItem.innerHTML = `
+                        <div style="display: flex; flex-direction: column; width: 100%">
+                            <div><strong>${user.username}</strong> (${user.email})</div>
+                            Взятые книги: ${
+                        user.borrowedBooks && user.borrowedBooks.length > 0 
+                        ? user.borrowedBooks.map(b => 
+                            b.bookId 
+                                ? b.bookId.title + " (до " + new Date(b.returnDate).toLocaleDateString() + ")"
+                                : "Книга удалена или не найдена"
+                        ).join(", ")
+                        : "Книг нет"
+            }
+                    </div>
+                `;
+
+                userList.appendChild(userItem);
+                scrollBox.appendChild(userList);
+        }
         });
 
     } catch (err) {
@@ -637,6 +637,89 @@ async function loadWaitingBooks(username) {
         console.log('Ошибка: ', error)
     }
 }
+
+async function search() {
+    const path = window.location.pathname;
+    const searchField = document.getElementById('input-search');
+    if (!searchField) return;
+
+    searchField.addEventListener('input', async () => {
+        try {
+            let url;
+            if (path.includes('/Main.html') || path.includes('/Books.html')) {
+                url = `${API_URL}/books`;
+
+            const response = await fetch(url);
+            if (!response.ok) {
+                console.log('Ошибка запроса:', response.status);
+                return;
+            }
+
+            const items = await response.json();
+
+            const query = searchField.value.toLowerCase();
+
+            const queryThreegrams = [];
+            for (let i = 0; i <= query.length - 3; i++) {
+                queryThreegrams.push(query.slice(i, i + 3));
+            }
+
+            const sortedBooks = [];
+
+            items.forEach(item => {
+                const title = item.title.toLowerCase();
+                let matches = 0;
+
+                for (let i = 0; i <= title.length - 3; i++) {
+                    const tg = title.slice(i, i + 3);
+                    if (queryThreegrams.includes(tg)) {
+                        matches++;
+                    }
+                }
+
+                if (matches >= queryThreegrams.length / 2) {
+                    sortedBooks.push(item);
+                }
+            });
+
+            displayBooks(sortedBooks);
+            }
+            else url = `${API_URL}/users`;
+        } catch (error) {
+            console.log('Ошибка:', error);
+        }
+    });
+}
+
+async function sort() {
+    const param = document.getElementById('select-sort');
+
+    if(!param) return;
+    const response = await fetch(`${API_URL}/books`);
+
+    try {
+        if (!response.ok) {
+            console.log('Ошибка запроса:', response.status);
+            return;
+        }
+        const books = await response.json();
+        let sortedBooks = [...books];
+        if(param.value=='title') {
+            sortedBooks.sort((a,b) => 
+                a.title.toLowerCase().localeCompare(b.title.toLowerCase())
+        );
+            displayBooks(sortedBooks);
+        }
+        if (param.value === 'author') {
+            sortedBooks.sort((a, b) =>
+                a.author.toLowerCase().localeCompare(b.author.toLowerCase())
+            );
+        }
+    } catch (error) {
+        console.log('Ошибка: ', error)
+    }
+}
+
 function searchClicked() {
     const search = document.getElementById('search-container');
     const filter = document.getElementById('filter-container');
@@ -659,6 +742,7 @@ function filtersClicked(){
 }
 function openAddBook() {
     const window = document.getElementById('add-book');
+    closeRemoveBook()
     window.style.display = 'flex';
     window.classList.add('active');
 }
@@ -671,6 +755,7 @@ function closeAddBook() {
 }
 function openRemoveBook() {
     const window = document.getElementById('remove-book');
+    closeAddBook();
     window.style.display = 'flex';
     window.classList.add('active');
 }
@@ -741,6 +826,7 @@ async function loadWishlists() {
 
         usersWithRequests.forEach(user => {
             const item = document.createElement('div');
+            item.onclick = 'openModal()';
             item.className = 'scroll-box-item';
             item.style.margin = '10px';
             item.style.aspectRatio = '3/1';
@@ -783,8 +869,7 @@ async function loadWishlists() {
 // DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
 
-    
-
+    search();    
     //Обработчик кнопки "Удалить" книгу у пользователя
     const btnRemove = document.getElementById('button-remove');
     if (btnRemove) {
@@ -859,6 +944,7 @@ if (btnExport) {
     }
 
     if (path.includes("Main.html") || path.includes("Books.html")) {
+        sort();
         loadBooks();
         populateFilters();
     }
