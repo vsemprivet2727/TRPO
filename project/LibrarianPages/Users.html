@@ -31,8 +31,6 @@
                 </div>
                 <div class="filters" id="filter-container" onclick="filtersClicked()">
                     <img src="../resources/tabs/add.png" alt="" width="18px" height="18px" style="cursor: pointer; margin-top: 1px;">
-
-                <div id="button-add-container" class="filter-box" style="display: flex; flex-direction: column;">
                     <table class="filter-box-table">
                         <tr>
                             <td><label for="search-input-name">Поиск</label></td>
@@ -58,21 +56,37 @@
                             <td><input type="date" id="input-date-end"></td>
                         </tr>
                     </table>
-                    <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
-                        <div style="display: flex; flex-direction: row; width:100%; gap: 5px;">
-                            <button class="btn btn-primary" id="button-add">Добавить</button>
-                            <button class="btn btn-primary" id="export-users-csv" style="display:flex; align-items: center;">
-                            <img src="../resources/navbar/open-book.png" alt="" style="width: 16px; margin-right: 5px;"> 
-                            Экспорт должников
-                        </button>
-                        <button class="btn btn-primary" id="reset-filters-btn">Сбросить</button>
-                    </div>
-                </div>
+                    <div style="display: flex; flex-direction: row; width:fit-content; gap: 5px; justify-content: left;">
+                    <button class="btn btn-primary" id="button-add">Добавить</button>
+                    <button class="btn btn-primary" id="export-users-csv" style="display:flex; align-items: center;">
+                        <img src="../resources/navbar/open-book.png" alt="" style="width: 16px; margin-right: 5px;">
+                        Экспорт должников
+                    </button>
                 </div>
                 </div>  
             </div>
 
         </div>
+        <dialog class="modal-box" id="button-add-container">
+                <div id="button-add-container" class="filter-box" style="display: flex; flex-direction: column;">
+                    <span class="close" onclick="modalUserClose()">&times;</span>
+<!--                      -->
+                    <table class="filter-box-table">
+                        <tr>
+                            <td><label for="user-borrowed-books-select">Книга</label></td>
+                            <td style="width:250px">
+                                <select id="user-borrowed-books-select">
+                                    <option value=""></option>
+                                    </select>
+                            </td>
+                        </tr>
+                    </table>
+                        <div style="display: flex; flex-direction: row; width:fit-content; gap: 5px; justify-content: left;">
+                            <button class="btn btn-primary" id="button-remove">Удалить из списка</button>
+                        <button class="btn btn-primary" id="reset-filters-btn">Сбросить</button>
+                    </div>
+                </div>
+        </dialog>
     </main>
 
     <script src="../../scripts/script.js"></script>

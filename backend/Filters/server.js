@@ -243,6 +243,40 @@ app.post('/api/users/borrow', async (req, res) => {
     }
 });
 
+app.post('/api/users/accept-wishlist', async (req, res) => {
+    const { userId, bookId, borrowedDate, returnDate } = req.body;
+
+    if (!userId || !bookId) {
+        return res.status(400).json({ message: 'Не хватает данных' });
+    }
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Пользователь не найден' });
+        }
+
+        // 1️⃣ Удаляем книгу из wishlist
+        user.wishlist = user.wishlist.filter(
+            id => id.toString() !== bookId.toString()
+        );
+
+        // 2️⃣ Добавляем в borrowedBooks
+        user.borrowedBooks.push({
+            bookId,
+            borrowedDate,
+            returnDate
+        });
+
+        await user.save();
+
+        res.json({ message: 'Книга выдана пользователю' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
 //DELET запрос на удаление книги у пользователя
 app.delete('/api/users/:userId/return/:bookId', async (req, res) => {
     try {

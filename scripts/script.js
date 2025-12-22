@@ -523,12 +523,9 @@ async function loadUsers() {
                 userItem.style.aspectRatio = '3/1';
 
                 userItem.addEventListener('click', () => {
-                    document.getElementById('selected-user-id').value = user._id;
-                    document.getElementById('selected-user-name').textContent = `👤 Выбран: ${user.username}`;
-
                     const removeSelect = document.getElementById('user-borrowed-books-select');
                     if (removeSelect) {
-                        removeSelect.innerHTML = '<option value="">Выберите книгу для удаления</option>';
+                        removeSelect.innerHTML = '<option value="">Книга для удаления</option>';
                         if (user.borrowedBooks && user.borrowedBooks.length > 0) {
                             user.borrowedBooks.forEach(b => {
                                 const option = document.createElement('option');
@@ -537,9 +534,10 @@ async function loadUsers() {
                                 removeSelect.appendChild(option);
                             });
                         } else {
-                            removeSelect.innerHTML = '<option value="">У пользователя нет книг</option>';
+                            removeSelect.innerHTML = '<option value="">Нет книг</option>';
                         }
                     }
+                    modalUserOpen();
                     });
 
                     userItem.innerHTML = `
@@ -785,13 +783,80 @@ function logOut() {
     })
 }
 
-function modalOpen(book) {
+async function acceptRequest(book, username) {
+    const startDate = document.getElementById('input-date-start')?.value;
+    const endDate = document.getElementById('input-date-end')?.value;
+
+    if (!startDate || !endDate) {
+        alert('Выберите даты');
+        return;
+    }
+
+    try {
+        const userRes = await fetch(`${API_URL}/users?username=${encodeURIComponent(username)}`);
+
+        if (!userRes.ok) {
+            const text = await userRes.text(); 
+            console.error("Ошибка при получении пользователя:", text);
+            throw new Error(`Ошибка запроса: ${userRes.status}`);
+        }
+
+        const users = await userRes.json();
+        if (!users.length) {
+            alert('Пользователь не найден');
+            return;
+        }
+
+        const user = users[0];
+
+        const response = await fetch(`${API_URL}/users/accept-wishlist`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: user._id,
+                bookId: book._id,
+                borrowedDate: startDate,
+                returnDate: endDate
+            })
+        });
+
+        if (!response.ok) {
+            const text = await response.text();
+            console.error("Ошибка при выдаче книги:", text);
+            throw new Error(`Ошибка запроса: ${response.status}`);
+        }
+
+        alert('Книга выдана пользователю');
+        modalClose();
+        location.reload();
+
+    } catch (error) {
+        console.error('Ошибка:', error.message);
+    }
+}
+
+function modalBooksOpen(book, username) {
     const modal = document.getElementById('modal');
+    if (!modal) return;
+
+    setDefaultDates();
+    btn = document.getElementById('btn-give')
+    btn.addEventListener('click', () => { acceptRequest(book, username) });
     modal.showModal();
 }
 
 function modalClose(){
     const modal = document.getElementById('modal');
+    modal.close();
+}
+
+function modalUserOpen() {
+    const modal = document.getElementById('button-add-container');
+    modal.showModal();
+}
+
+function modalUserClose() {
+    const modal = document.getElementById('button-add-container');
     modal.close();
 }
 
@@ -837,13 +902,7 @@ async function loadWishlists() {
         usersWithRequests.forEach(user => {
             const item = document.createElement('div');
             item.className = 'scroll-box-item';
-            item.style.margin = '10px';
             item.style.aspectRatio = '3/1';
-            item.style.display = 'flex';
-            item.style.flexDirection = 'column'
-            item.style.justifyContent = 'center';
-            item.style.background = 'none';
-            item.style.boxShadow = '0 0 10px #000000a1';
 
             const booksHtml = user.wishlist.map(wishId => {
                 const bookData = allBooks.find(b => (b._id === wishId || b.id === wishId));
@@ -853,8 +912,8 @@ async function loadWishlists() {
                     return `
                             <table class="filter-box-table" style="flex: 0 0 90%; table-layout:fixed;">
                                 <tr>
-                                    <td style="width:400px;"><strong>${bookData.title}</strong><br>${bookData.author}</td>
-                                    <td style="display:flex; justify-content:right; align-items:center;"><button id="give-btn" class="btn btn-primary" style="background-color:#ffffff">Одобрить</button></td>
+                                    <td style="width:400px;justify-content:left;"><strong>${bookData.title}</strong><br>${bookData.author}</td>
+                                    <td><button id="give-btn" class="btn btn-primary" style="background-color:#ffffff">Одобрить</button></td>
                                 </tr>
                             </table>
                     `;
@@ -864,7 +923,7 @@ async function loadWishlists() {
             }).join('');
 
             item.innerHTML = `
-                <div style="font-size: 1.1rem; font-weight: bold; color: #000;">
+                <div style="font-size: 1.1rem; font-weight: bold; color: #000;text-align:left;">
                     ${user.username} (${user.email})
                 </div>
                 <div>
@@ -878,7 +937,7 @@ async function loadWishlists() {
 
             if (bookData) {
                     btn.addEventListener('click', () => {
-                        modalOpen(bookData);
+                        modalBooksOpen(bookData, user.username);
                     });
                 }
             });
@@ -1016,7 +1075,6 @@ if (btnExport) {
 
     if (document.getElementById('waiting-books-scroll-box')){
         loadWaitingBooks(currentUser);
-        setDefaultDates();
     }
 
     const btnAddBookToUser = document.getElementById('button-add');
