@@ -256,12 +256,12 @@ app.post('/api/users/accept-wishlist', async (req, res) => {
             return res.status(404).json({ message: 'Пользователь не найден' });
         }
 
-        // 1️⃣ Удаляем книгу из wishlist
+        // Удаляем книгу из wishlist
         user.wishlist = user.wishlist.filter(
             id => id.toString() !== bookId.toString()
         );
 
-        // 2️⃣ Добавляем в borrowedBooks
+        // Добавляем в borrowedBooks
         user.borrowedBooks.push({
             bookId,
             borrowedDate,

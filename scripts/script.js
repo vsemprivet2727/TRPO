@@ -50,6 +50,7 @@ function displayBooks(books) {
     for(let i = 0; i < books.length; i++) {
         const bookItem = document.createElement('div');
         bookItem.className = 'scroll-box-item book-card';
+        bookItem.style.width = '100%';
         bookItem.innerHTML = `
             <div style="display: flex; flex-direction: row; justify-content: space-between; width:100%">
                 <div style="display: flex; flex-direction: column; text-align: left;">
@@ -71,18 +72,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeBtn = document.querySelector('.close');
 
     closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
+        modal.close();
     });
 
     window.addEventListener('click', (event) => {
         if (event.target === modal) {
-            modal.style.display = 'none';
+            modal.close()
         }
     });
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            modal.style.display = 'none';
+            modal.close()
         }
     });
 });
@@ -90,9 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
 const modal = document.getElementById('bookModal');
 const closeBtn = document.querySelector('.close');
 
-document.addEventListener('DOMContentLoaded', function() {
-    initModal();
-});
+/* document.addEventListener('DOMContentLoaded', function() {
+    openBookModal
+}); */
 
 
 
@@ -106,20 +107,8 @@ function openBookModal(book) {
     document.getElementById('modalYear').textContent = new Date(book.publishDate).getFullYear();
     document.getElementById('modalGenre').textContent = Array.isArray(book.genre) ? book.genre.join(', ') : book.genre;
     document.getElementById('modalPublisher').textContent = book.publisher;
-    
-    modal.style.display = 'block';
-}
 
-
-
-function setupBookClicks() {
-    const bookItems = document.querySelectorAll('.scroll-box-item');
-    
-    bookItems.forEach(item => {
-        item.addEventListener('click', function() {
-            openBookModal(testBooks[0]);
-        });
-    });
+    modal.showModal();
 }
 
 //Добавление книги в бд
@@ -319,6 +308,46 @@ if (removeButton) {
         });
     }
 });
+
+async function requestBook() {
+    const username = localStorage.getItem('username');
+    
+    if (!username) {
+        alert('Вы не вошли в аккаунт');
+        location.href = '../Auth.html';
+        return;
+    }
+
+    if (!currentSelectedBookId) {
+        alert('Книга не выбрана');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/users/wishlist`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                bookId: currentSelectedBookId
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(data.message || 'Заявка отправлена');
+            document.getElementById('bookModal').close();
+        } else {
+            alert(data.message || 'Ошибка запроса');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Ошибка соединения с сервером');
+    }
+}
 
 // ФИЛЬТРАЦИЯ
 
@@ -557,8 +586,8 @@ async function loadWaitingBooks(username) {
             if (requestedBooks.length>0) {
                 requestedBooks.forEach(book => {
                 const item = document.createElement('div');
-                item.className = 'scroll-box-item';
-                item.style.aspectRatio = '3/1'
+                item.className = 'scroll-box-item book-card';
+                item.style.aspectRatio = '7/1'
                 item.innerHTML = `
                 <div style="display: flex; flex-direction: row; justify-content: space-between; width:100%">
                     <div style="display: flex; flex-direction: column; text-align: left;">
@@ -715,12 +744,13 @@ function inStockClicked() {
 
 function logOut() {
     const loginBtn = document.getElementById('user-display-name');
-    loginBtn.addEventListener('click', (e)=>{
+    loginBtn.addEventListener('click', (e) => {
         e.preventDefault();
         const answer = confirm('Вы уверены что хотите выйти с аккаунта?')
         if (answer == true) {
-            localStorage.removeItem('currentUser')
+            localStorage.removeItem('currentUser');
             window.location.href('UserPages/Books.html');
+            location.reload()
         }
     })
 }
@@ -968,7 +998,7 @@ if (btnExport) {
     const storedUser = localStorage.getItem('username'); 
 
     if (storedUser && userDisplay) {
-        userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${storedUser}`;
+        userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${currentUser}`;
     }
 
     if (path.includes("Main.html") || path.includes("Books.html")) {
@@ -1002,14 +1032,10 @@ if (btnExport) {
             if (document.getElementById('user-books-scroll-box')) {
                 loadUserBooks(currentUser);
             }
-        } else  if (path.includes('UsersBooks.html') || path.includes('Waiting.html')) {
+        } else if (path.includes('UsersBooks.html') || path.includes('Waiting.html')) {
             const answer = confirm('Вы не вошли в аккаунт. Хотите войти?')
             if(answer == true) window.location.href = '../Auth.html'; 
         }
-    }
-
-    if (document.getElementById('bookModal')) {
-        initModal();
     }
 
     if (document.getElementById('users-request-scroll-box')) {
