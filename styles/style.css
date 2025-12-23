@@ -182,6 +182,7 @@ main {
     z-index: 1000;
     width:75%;
     max-width: 800px;
+    height: fit-content;
     display: flex;
     align-self: center;
     flex-direction: row;
@@ -218,7 +219,7 @@ main {
 }
 
 .search.active {
-    width: 90%;
+    width: 95%;
     border: 1px solid #c29c5f;
 }
 
@@ -231,14 +232,13 @@ main {
     padding: 5px;
     padding-right: 6px;
     width: 30px;
-    height: 30px;
-    min-height: 30px;
+    height: fit-content;
+    max-height: 30px;
     background: #FFCF88;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
     gap: 0px;
-    justify-content:baseline;
     align-items:center;
     transition: all 0.5s ease-out;
     overflow: hidden;
@@ -249,10 +249,11 @@ main {
 }
 
 .filters.active {
-    width:90%;
+    border: 1px solid #c29c5f;
+    width:95%;
     height: fit-content;
+    max-height: 1000px;
     padding-bottom: 15px;
-    border: solid 1px #c29c5f
 }
 
 .in-stock-thumbler {
@@ -287,7 +288,7 @@ main {
     justify-content: space-between;
     gap: 15px;
     padding: 15px 0px;
-    background-color: none;
+    background-color: #fdefd9;
     aspect-ratio: 2/1;
     border-radius: 25px;
     padding: 15px 30px;
@@ -339,6 +340,7 @@ main {
 .modal-box .btn-primary{
     background-color: #fdefd9;;
     margin: none;
+    border-radius: 15px;
     transition: all 0.3s ease;
 }
 .modal-box .btn-primary:hover {

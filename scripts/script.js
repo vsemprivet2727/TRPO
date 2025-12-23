@@ -94,65 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initModal();
 });
 
-function initModal() {
-    const modal = document.getElementById('bookModal');
-    const closeBtn = document.querySelector('.close');
-    const requestBtn = document.querySelector('#bookModal .btn-primary');
 
-    if (!modal) return;
-
-    const closeModal = () => {
-        modal.style.display = 'none';
-        currentSelectedBookId = null;
-    };
-
-    if (closeBtn) closeBtn.onclick = closeModal;
-    
-    window.onclick = (event) => {
-        if (event.target === modal) closeModal();
-    };
-
-    document.onkeydown = (event) => {
-        if (event.key === 'Escape') closeModal();
-    };
-
-    // ОБРАБОТКА КНОПКИ "ЗАПРОСИТЬ"
-    if (requestBtn) {
-        requestBtn.onclick = async () => {
-            const user = localStorage.getItem(AUTH_KEY);
-
-            if (!user || user === "null") {
-                alert("Пожалуйста, войдите в систему, чтобы оставить заявку");
-                return;
-            }
-
-            if (!currentSelectedBookId) return;
-
-            try {
-                const response = await fetch(`${API_URL}/users/wishlist`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username: user,
-                        bookId: currentSelectedBookId
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert("Книга добавлена в ваши заявки!");
-                    closeModal();
-                } else {
-                    alert(data.message || "Ошибка при создании заявки");
-                }
-            } catch (error) {
-                console.error("Ошибка запроса:", error);
-                alert("Сервер не отвечает");
-            }
-        };
-    }
-}
 
 function openBookModal(book) {
     const modal = document.getElementById('bookModal');
@@ -517,7 +459,7 @@ async function loadUsers() {
         users.forEach(user => {
             if (user.username != 'admin') {
                 const userItem = document.createElement('div');
-                userItem.className = 'scroll-box-item';
+                userItem.className = 'scroll-box-item book-card';
                 userItem.style.margin = '10px';
                 userItem.style.cursor = 'pointer';
                 userItem.style.aspectRatio = '3/1';
@@ -537,7 +479,7 @@ async function loadUsers() {
                             removeSelect.innerHTML = '<option value="">Нет книг</option>';
                         }
                     }
-                    modalUserOpen();
+                    modalUserOpen(user);
                     });
 
                     userItem.innerHTML = `
@@ -616,7 +558,7 @@ async function loadWaitingBooks(username) {
                 requestedBooks.forEach(book => {
                 const item = document.createElement('div');
                 item.className = 'scroll-box-item';
-                item.style.aspectRatio = '7/1'
+                item.style.aspectRatio = '3/1'
                 item.innerHTML = `
                 <div style="display: flex; flex-direction: row; justify-content: space-between; width:100%">
                     <div style="display: flex; flex-direction: column; text-align: left;">
@@ -850,8 +792,9 @@ function modalClose(){
     modal.close();
 }
 
-function modalUserOpen() {
+function modalUserOpen(user) {
     const modal = document.getElementById('button-add-container');
+    localStorage.setItem('userData', user._id);
     modal.showModal();
 }
 
@@ -959,7 +902,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnRemove = document.getElementById('button-remove');
     if (btnRemove) {
         btnRemove.addEventListener('click', async () => {
-            const userId = document.getElementById('selected-user-id').value;
+            const userId = localStorage.getItem('userData')
             const bookId = document.getElementById('user-borrowed-books-select').value;
 
             if (!userId || !bookId) return alert("Выберите пользователя и книгу!");
@@ -971,7 +914,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok) {
                     alert("Книга успешно удалена у пользователя!");
-                    loadUsers();
+                    location.reload();
                 } else {
                     alert("Ошибка при удалении");
                 }
@@ -1081,7 +1024,7 @@ if (btnExport) {
 
 if (btnAddBookToUser) {
     btnAddBookToUser.addEventListener('click', async () => {
-        const userId = document.getElementById('selected-user-id').value;
+        const userId = localStorage.getItem('userData')
         const bookId = document.getElementById('book-select').value;
         const startDate = document.getElementById('input-date-start').value;
         const returnDate = document.getElementById('input-date-end').value;
@@ -1105,7 +1048,7 @@ if (btnAddBookToUser) {
 
             if (response.ok) {
                 alert("Книга успешно выдана пользователю!");
-                loadUsers(); // Обновляем список, чтобы увидеть изменения
+                loadUsers();
             } else {
                 const err = await response.json();
                 alert("Ошибка: " + err.message);
