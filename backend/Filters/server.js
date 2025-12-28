@@ -107,25 +107,35 @@ app.get("/api/books", async (req, res) => {
 
 app.get("/api/users", async (req, res) => {
   try {
-    const {username, email} = req.query;
+    const { username, email, bookId, dateStart, dateEnd } = req.query;
     const filter = {};
 
     if (username) {
-        filter.username = { $regex: new RegExp(username, 'i') };
+      filter.username = { $regex: new RegExp(username, 'i') };
     }
     if (email) {
-        filter.email = { $regex: new RegExp(email, 'i') };
+      filter.email = { $regex: new RegExp(email, 'i') };
+    }
+
+    if (bookId) {
+      filter["borrowedBooks.bookId"] = bookId;
+    }
+
+    if (dateStart || dateEnd) {
+      filter["borrowedBooks.returnDate"] = {};
+      if (dateStart) filter["borrowedBooks.returnDate"].$gte = new Date(dateStart);
+      if (dateEnd) filter["borrowedBooks.returnDate"].$lte = new Date(dateEnd);
     }
 
     const users = await User.find(filter).populate({
-    path: 'borrowedBooks.bookId',
-    select: 'title author'
+      path: 'borrowedBooks.bookId',
+      select: 'title author'
     });
 
     res.json(users);
   } catch (err) {
     console.error("Ошибка при получении пользователей:", err);
-    res.status(500).json({ error: "Ошибка сервера при получении пользователей: " + err.message });
+    res.status(500).json({ error: "Ошибка сервера" });
   }
 });
 

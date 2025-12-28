@@ -148,9 +148,9 @@
                 </div>            
         </div>
         </div>
-    <div id="bookModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
+    <dialog id="bookModal" class="modal-box" style="width:400px">
+        <div>
+            <span class="close" onclick="modalClose()">&times;</span>
             <h2>Информация о книге</h2>
             <div id="modalContent">
                 <p><strong>Название:</strong> <span id="modalTitle"></span></p>
@@ -160,9 +160,10 @@
                 <p><strong>Издатель:</strong> <span id="modalPublisher"></span></p>
             </div>
         </div>
-    </div>
+    </dialog>
     </main>
 
+    <script src="../../scripts/admin-books.js" type="module"></script>
     <script src="../../scripts/script.js"></script>
 </body>
 </html>

@@ -33,10 +33,6 @@
                     <img src="../resources/tabs/add.png" alt="" width="18px" height="18px" style="cursor: pointer; margin-top: 1px;">
                     <table class="filter-box-table">
                         <tr>
-                            <td><label for="search-input-name">Поиск</label></td>
-                            <td><input type="text" id="search-input-name" class="user-search-name" placeholder="Имя, фамилия..."></td>
-                        </tr>
-                        <tr>
                             <td><label for="search-input-email">Почта</label></td>
                             <td><input type="text" id="search-input-email" class="user-search-email" placeholder="example@mail.com"></td>
                         </tr>
@@ -70,14 +66,12 @@
         <dialog class="modal-box" id="button-add-container">
                 <div id="button-add-container" class="filter-box" style="display: flex; flex-direction: column;">
                     <span class="close" onclick="modalUserClose()">&times;</span>
-<!--                      -->
                     <table class="filter-box-table">
                         <tr>
-                            <td><label for="user-borrowed-books-select">Книга</label></td>
-                            <td style="width:250px">
+                            <td style="width:300px">
                                 <select id="user-borrowed-books-select" multiple="4">
                                     <option value=""></option>
-                                    </select>
+                                </select>
                             </td>
                         </tr>
                     </table>
@@ -88,6 +82,7 @@
         </dialog>
     </main>
 
-    <script src="../../scripts/script.js"></script>
 </body>
+<script src="../../scripts/admin-users.js" type="module"></script>
+<script src="../../scripts/script.js"></script>
 </html>
