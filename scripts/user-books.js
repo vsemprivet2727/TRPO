@@ -7,6 +7,7 @@ export async function initCataloguePage() {
     const addBookModal = document.getElementById('add-book');
     const removeBookModal = document.getElementById('remove-book');
     const selectRemove = document.getElementById('select-for-remove');
+    const bookModal = document.getElementById('bookModal');
 
     let gridContainer = document.getElementById('books-grid-container');
     if (!gridContainer) {
@@ -34,13 +35,17 @@ export async function initCataloguePage() {
             const searchText = searchInput ? searchInput.value.toLowerCase() : '';
             
             gridContainer.innerHTML = '';
-
             if (selectRemove) selectRemove.innerHTML = '<option value="">Выберите книгу</option>';
 
             books.forEach(book => {
                 if (searchText && !book.title.toLowerCase().includes(searchText)) return;
 
-                const card = UiRenderer.createBookCard(book, []);
+                const card = UiRenderer.createBookCard(book, [
+                    {
+                        label: 'Подробнее',
+                        onClick: () => UiRenderer.openBookModal(book)
+                    }
+                ]);
                 gridContainer.appendChild(card);
 
                 if (selectRemove) {
@@ -54,13 +59,58 @@ export async function initCataloguePage() {
             if (gridContainer.children.length === 0) {
                 gridContainer.innerHTML = '<p style="grid-column: span 3; text-align: center;">Книги не найдены</p>';
             }
-
         } catch (e) {
-            console.error("Ошибка при загрузке книг:", e);
-            gridContainer.innerHTML = `<p style="color: red; grid-column: span 3;">Ошибка связи с сервером: ${e.message}</p>`;
+            console.error(e);
         }
     }
 
+    async function requestBook() {
+    const bookId = bookModal.dataset.currentBookId;
+    const userRaw = localStorage.getItem('currentUser');
+    
+    if (!userRaw) {
+        alert('Пожалуйста, войдите в систему');
+        return;
+    }
+
+    let username;
+    try {
+        const userData = JSON.parse(userRaw);
+        username = userData.username || userData;
+    } catch (e) {
+        username = userRaw;
+    }
+
+    try {
+        const users = await ApiService.get('/users', { username: username });
+        if (!users || users.length === 0) throw new Error('Пользователь не найден');
+        
+        const userId = users[0]._id;
+
+        // Формируем данные. 
+        // Если это просто wishlist (список ожидания), отправляем ID.
+        // Если ваш бэкенд сразу требует даты (как в borrowedBooks), добавляем их:
+        const requestData = {
+            userId: userId,
+            bookId: bookId,
+            // Добавляем даты на случай, если сервер их требует сразу
+            borrowedDate: new Date().toISOString(),
+            returnDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // +7 дней
+        };
+
+        await ApiService.post('/users/wishlist', requestData);
+
+        alert('Заявка отправлена!');
+        if (bookModal.close) bookModal.close();
+        else bookModal.style.display = 'none';
+        
+    } catch (e) {
+        console.error(e);
+        alert('Ошибка: ' + e.message);
+    }
+    }
+
+    document.getElementById('request-btn')?.addEventListener('click', requestBook);
 
     if (searchInput) {
         searchInput.addEventListener('input', loadBooks);
@@ -78,47 +128,6 @@ export async function initCataloguePage() {
         loadBooks();
     });
 
-    document.getElementById('add-new-book')?.addEventListener('click', async () => {
-        const title = document.getElementById('new-book-name').value;
-        const author = document.getElementById('new-book-author').value;
-        
-        if (!title || !author) return alert("Введите название и автора");
-
-        const newBook = {
-            title,
-            author,
-            publisher: document.getElementById('new-book-publisher').value,
-            genre: document.getElementById('new-book-genres').value.split(' ').filter(g => g),
-            publishDate: new Date(document.getElementById('new-book-year').value || new Date().getFullYear(), 0, 1),
-            inStock: document.getElementById('new-book-inStock').value === 'true'
-        };
-
-        try {
-            await ApiService.post('/books', newBook);
-            alert('Книга добавлена!');
-            addBookModal.style.display = 'none';
-            loadBooks();
-        } catch (e) {
-            alert('Ошибка: ' + e.message);
-        }
-    });
-
-    document.getElementById('remove-book-btn')?.addEventListener('click', async () => {
-        const id = selectRemove.value;
-        if (!id) return alert("Выберите книгу");
-        
-        if (confirm('Удалить эту книгу навсегда?')) {
-            try {
-                await ApiService.delete(`/books/${id}`);
-                alert('Книга удалена');
-                removeBookModal.style.display = 'none';
-                loadBooks();
-            } catch (e) {
-                alert('Ошибка: ' + e.message);
-            }
-        }
-    });
-
     window.inStockClicked = () => {
         document.getElementById('checkbox-is-we-have')?.classList.toggle('active');
         loadBooks();
@@ -132,5 +141,5 @@ export async function initCataloguePage() {
 
     await loadBooks();
 }
-
+console.log(localStorage.getItem('currentUser'))
 initCataloguePage();

@@ -2,8 +2,6 @@ export class UiRenderer {
     static createBookCard(book, actions = []) {
         const div = document.createElement('div');
         div.className = 'scroll-box-item book-card';
-        div.style.width = '16vw';
-        div.style.height = '8vw';
         div.innerHTML = `
             <div style="display:flex; flex-direction:row; gap:10px">
                 <div style="display:flex;flex-direction:column; flex:1">
