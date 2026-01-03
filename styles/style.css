@@ -174,7 +174,6 @@ main {
     gap: 10px;
     flex-direction: column;
     justify-content: baseline;
-    align-items: center;
     box-shadow: inset 0px 0px 30px #fff;
 }
 
@@ -202,7 +201,6 @@ main {
     justify-content: baseline;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
     transition: all 0.5s ease-out;
 }
 
@@ -242,9 +240,8 @@ main {
     flex-direction: column;
     gap: 0px;
     align-items:center;
-    overflow: hidden;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
     transition: all 0.5s ease-out;
+    overflow: hidden;
 }
 
 .filters:hover {
@@ -292,7 +289,6 @@ main {
     gap: 15px;
     padding: 15px 0px;
     background-color: #fdefd9;
-    width: 100%;
     aspect-ratio: 2/1;
     border-radius: 25px;
     padding: 15px 30px;
