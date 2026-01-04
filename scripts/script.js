@@ -523,12 +523,11 @@ async function loadWaitingBooks(username) {
                         <small>${book.author}</span>
                     </div>
                     <img src="../resources/Book open.png" alt="Книга">
-                    <div><button id="deny-btn" class="btn btn-primary" style="background: #fff">Отменить</button></div>
+                    <div><button class="deny-btn btn btn-primary" style="background: #fff">Отменить</button></div>
                 </div>
                 `;
                 scrollBox.appendChild(item);
                 });
-                addDenyButtonListeners();
             }
             else scrollBox.innerHTML = `<h1>Нет заявок на книги</h1>`;
         }
@@ -574,26 +573,50 @@ async function requestBook() {
     })
 }
 
-function addDenyButtonListeners() {
-    const denyButtons = document.querySelectorAll('.deny-btn');
+function setupDenyButtonDelegation() {
+    const scrollBox = document.getElementById('waiting-books-scroll-box');
+    if (!scrollBox) return;
     
-    denyButtons.forEach(button => {
-        button.addEventListener('click', async function() {
-            const bookId = this.dataset.bookId; 
-            const username = localStorage.getItem('currentUser');
-            
-            console.log(`Удаляем книгу с ID: ${bookId} для пользователя: ${username}`);
-            
+    scrollBox.addEventListener('click', async function(event) {
+    const button = event.target.closest('.deny-btn');
+    if (button) {
+        const item = button.closest('.scroll-box-item');
+        const bookId = item ? item.dataset.bookId : null;
+        const username = localStorage.getItem('currentUser');
+        
+             console.log('Book ID:', bookId);
+        console.log('Username:', username);
+
+        if (!bookId) {
+            console.error('Не удалось получить bookId');
+            return;
+        }
+        
+        if (!confirm('Вы уверены, что хотите отменить заявку на эту книгу?'))
+            return;
+        
+        try {
             await removeFromWishlist(bookId, username);
+            if (item) {
+                item.remove();
+            }
             
-            loadWaitingBooks(username);
-        });
-    });
+            if (scrollBox.children.length === 0) {
+                scrollBox.innerHTML = `<h1>Нет заявок на книги</h1>`;
+            }
+        } 
+        catch (error) {
+            button.disabled = false;
+            button.textContent = 'Отменить';
+            alert(error.message);
+        }
+    }
+});
 }
 
 async function removeFromWishlist(bookId, username) {
     try {
-        const response = await fetch(`${API_URL}/api/users/${username}/wishlist/${bookId}`, {
+        const response = await fetch(`${API_URL}/users/${username}/wishlist/${bookId}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
         });
@@ -1035,8 +1058,7 @@ if (btnExport) {
             if (document.getElementById('user-books-scroll-box')) 
                 loadUserBooks(currentUser);
             
-            requestBook();
-        } 
+            requestBook();        } 
         else if (path.includes('UsersBooks.html') || path.includes('Waiting.html')) {
             const answer = confirm('Вы не вошли в аккаунт. Хотите войти?')
             if(answer == true) window.location.href = '../Auth.html'; 
@@ -1048,7 +1070,9 @@ if (btnExport) {
     }
 
     if (document.getElementById('waiting-books-scroll-box')){
-        loadWaitingBooks(currentUser);
+        loadWaitingBooks(currentUser).then(() => {
+            setupDenyButtonDelegation();
+        });
     }
 
     const btnAddBookToUser = document.getElementById('button-add');

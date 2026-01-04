@@ -335,7 +335,7 @@ app.delete("/api/users/:username/wishlist/:bookId", async (req, res) => {
 
         const user = await User.findOne({ username });
 
-        user.wishlist = user.wishlist.filter(b => b.bookId.toString() !== bookId);
+        user.wishlist = user.wishlist.filter(b => b.toString() !== bookId);
         
         await user.save();
         res.status(200).json({ message: "Книга удалена" });
