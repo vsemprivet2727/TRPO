@@ -266,12 +266,10 @@ app.post('/api/users/accept-wishlist', async (req, res) => {
             return res.status(404).json({ message: 'Пользователь не найден' });
         }
 
-        // 1️⃣ Удаляем книгу из wishlist
         user.wishlist = user.wishlist.filter(
             id => id.toString() !== bookId.toString()
         );
 
-        // 2️⃣ Добавляем в borrowedBooks
         user.borrowedBooks.push({
             bookId,
             borrowedDate,
@@ -325,6 +323,24 @@ app.post("/api/users/wishlist", async (req, res) => {
         res.status(200).json({ message: "Заявка успешно создана!" });
     } catch (err) {
         res.status(500).json({ message: "Ошибка сервера: " + err.message });
+    }
+});
+
+app.delete("/api/users/:username/wishlist/:bookId", async (req, res) => {
+    try {
+        const { username, bookId } = req.params;
+
+        if (!username || !bookId) 
+            return res.status(400).json({ message: "Недостаточно данных" });
+
+        const user = await User.findOne({ username });
+
+        user.wishlist = user.wishlist.filter(b => b.bookId.toString() !== bookId);
+        
+        await user.save();
+        res.status(200).json({ message: "Книга удалена" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 

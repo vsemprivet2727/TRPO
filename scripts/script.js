@@ -11,7 +11,9 @@ async function loadBooks() {
     try {
         const response = await fetch(`${API_URL}/books`);
         if (!response.ok) throw new Error('Ошибка загрузки книг');
+
         const books = await response.json();
+        
         displayBooks(books);
     } catch (error) {
         console.error('Error loading books: ', error);
@@ -87,12 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
 const modal = document.getElementById('bookModal');
 const closeBtn = document.querySelector('.close');
 
-document.addEventListener('DOMContentLoaded', function() {
-    initModal();
-});
-
-
-
 function openBookModal(book) {
     const modal = document.getElementById('bookModal');
     
@@ -107,8 +103,6 @@ function openBookModal(book) {
     modal.style.display = 'block';
 }
 
-
-
 function setupBookClicks() {
     const bookItems = document.querySelectorAll('.scroll-box-item');
     
@@ -122,9 +116,7 @@ function setupBookClicks() {
 //Добавление книги в бд
 //Удаление книги из бд
 document.addEventListener('DOMContentLoaded', () => {
-    
     //Добавление книги в бд
-
     const addButton = document.getElementById('add-new-book');
     const formElementIds = [ // Список ID всех обязательных полей
         'new-book-name',
@@ -134,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'new-book-genres',
         'new-book-inStock'
     ];
+
     if(addButton){
         addButton.addEventListener('click', async () => {
         
@@ -222,10 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const removeButton = document.getElementById('remove-book-btn');
     
 if (removeButton) {
-
-    // Загрузка книг в выпадающий список
     async function loadBooksForRemoval() {
-        // Дополнительная проверка внутри функции
         if (!removeSelect) return; 
 
         try {
@@ -249,10 +239,8 @@ if (removeButton) {
         }
     }
 
-    // Запуск загрузки списка книг
     loadBooksForRemoval();
 
-    // Обработчик кнопки "Удалить"
     removeButton.addEventListener('click', async () => {
         if (!removeSelect) return;
         
@@ -288,7 +276,6 @@ if (removeButton) {
 
     const resetFiltersButton = document.getElementById('reset-filters-btn');
 
-    // ID элементов фильтрации, которые нужно сбросить
     const filterIds = [
         'checkbox-is-we-have',
         'genre-select',
@@ -296,7 +283,6 @@ if (removeButton) {
         'author-select',
         'input-year'
     ];
-    // Сброс фильтров
     if (resetFiltersButton) {
         resetFiltersButton.addEventListener('click', () => {
         
@@ -527,23 +513,101 @@ async function loadWaitingBooks(username) {
                 requestedBooks.forEach(book => {
                 const item = document.createElement('div');
                 item.className = 'scroll-box-item';
-                item.style.aspectRatio = '3/1'
+                item.style.aspectRatio = '7/1';
+                item.style.width = '100%';
+                item.dataset.bookId = book._id;
                 item.innerHTML = `
-                <div style="display: flex; flex-direction: row; justify-content: space-between; width:100%">
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; width:100%">
                     <div style="display: flex; flex-direction: column; text-align: left;">
                         <span class="title">${book.title}</span>
                         <small>${book.author}</span>
                     </div>
                     <img src="../resources/Book open.png" alt="Книга">
+                    <div><button id="deny-btn" class="btn btn-primary" style="background: #fff">Отменить</button></div>
                 </div>
                 `;
                 scrollBox.appendChild(item);
                 });
+                addDenyButtonListeners();
             }
             else scrollBox.innerHTML = `<h1>Нет заявок на книги</h1>`;
         }
     } catch (error) {
         console.log('Ошибка: ', error)
+    }
+}
+
+async function requestBook() {
+    const btn = document.getElementById('request-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', async () => {
+    try {
+        btn.disabled = true;
+        btn.textContent = 'Отправка...';
+        const response = await fetch(`${API_URL}/users/wishlist`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: localStorage.getItem('currentUser'), 
+                bookId: currentSelectedBookId
+            })
+        });
+
+        if (!response.ok) {
+            const text = await response.text();
+            console.error("Ошибка при добавлении в список желаемого:", text);
+            throw new Error(`Ошибка запроса: ${response.status}`);
+        }
+
+        const result = await response.json();
+        alert(result.message);
+        btn.textContent = 'Добавлено';
+        setTimeout(() => {
+            btn.textContent = 'Запросить';
+        }, 300);
+    } catch (error) {
+        console.log(error);
+        btn.textContent = 'Запросить';
+        alert('Не удалось добавить книгу в список желаемого. Попробуйте снова.');
+    }
+    })
+}
+
+function addDenyButtonListeners() {
+    const denyButtons = document.querySelectorAll('.deny-btn');
+    
+    denyButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const bookId = this.dataset.bookId; 
+            const username = localStorage.getItem('currentUser');
+            
+            console.log(`Удаляем книгу с ID: ${bookId} для пользователя: ${username}`);
+            
+            await removeFromWishlist(bookId, username);
+            
+            loadWaitingBooks(username);
+        });
+    });
+}
+
+async function removeFromWishlist(bookId, username) {
+    try {
+        const response = await fetch(`${API_URL}/api/users/${username}/wishlist/${bookId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok)
+            throw new Error(result.message || 'Ошибка при удалении');
+
+        alert(result.message);
+
+        return result;
+    } catch (error) {
+        console.error('Ошибка:', error);
     }
 }
 
@@ -964,21 +1028,19 @@ if (btnExport) {
 
     if (path.includes("UserPages")) {
         logOut();
-        if (currentUser && userDisplay) {
-        userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${currentUser}`;
-    }
+        if (currentUser && userDisplay)
+            userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${currentUser}`;
+
         if (currentUser) {
-            if (document.getElementById('user-books-scroll-box')) {
+            if (document.getElementById('user-books-scroll-box')) 
                 loadUserBooks(currentUser);
-            }
-        } else  if (path.includes('UsersBooks.html') || path.includes('Waiting.html')) {
+            
+            requestBook();
+        } 
+        else if (path.includes('UsersBooks.html') || path.includes('Waiting.html')) {
             const answer = confirm('Вы не вошли в аккаунт. Хотите войти?')
             if(answer == true) window.location.href = '../Auth.html'; 
         }
-    }
-
-    if (document.getElementById('bookModal')) {
-        initModal();
     }
 
     if (document.getElementById('users-request-scroll-box')) {
