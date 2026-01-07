@@ -771,13 +771,16 @@ function inStockClicked() {
 
 function logOut() {
     const loginBtn = document.getElementById('user-display-name');
-    loginBtn.addEventListener('click', (e)=>{
+    loginBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        const answer = confirm('Вы уверены что хотите выйти с аккаунта?')
+        if (localStorage.getItem('currentUser')) {
+            const answer = confirm('Вы уверены что хотите выйти с аккаунта?')
         if (answer == true) {
-            localStorage.removeItem('currentUser')
-            window.location.href('UserPages/Books.html');
+            localStorage.removeItem('currentUser');
+            window.location.href = 'Books.html';
         }
+    }
+    else window.location.href = '../Auth.html';
     })
 }
 
@@ -909,15 +912,13 @@ async function loadWishlists() {
                 if (bookData) {
                     
                     return `
-                            <table class="filter-box-table" style="flex: 0 0 90%; table-layout:fixed;">
+                            <table class="filter-box-table" style="flex: 0 0 100%; table-layout:fixed;">
                                 <tr>
                                     <td style="width:400px;justify-content:left;"><strong>${bookData.title}</strong><br>${bookData.author}</td>
-                                    <td><button id="give-btn" class="btn btn-primary" style="background-color:#ffffff">Одобрить</button></td>
+                                    <td><button class="btn btn-primary" style="background-color:#ffffff">Одобрить</button></td>
                                 </tr>
                             </table>
                     `;
-                } else {
-                    return `<div style="margin-left: 20px; color: #999;">Книга удалена или не найдена (ID: ${wishId})</div>`;
                 }
             }).join('');
 
@@ -1021,10 +1022,8 @@ if (btnExport) {
     const userDisplay = document.getElementById('user-display-name');
     const path = window.location.pathname;
 
-    const storedUser = localStorage.getItem('username'); 
-
-    if (storedUser && userDisplay) {
-        userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${storedUser}`;
+    if (currentUser && userDisplay) {
+        userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${currentUser}`;
     }
 
     if (path.includes("Main.html") || path.includes("Books.html")) {
@@ -1062,6 +1061,7 @@ if (btnExport) {
         else if (path.includes('UsersBooks.html') || path.includes('Waiting.html')) {
             const answer = confirm('Вы не вошли в аккаунт. Хотите войти?')
             if(answer == true) window.location.href = '../Auth.html'; 
+            else window.location.href = 'Books.html';
         }
     }
 
