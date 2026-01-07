@@ -300,7 +300,7 @@ app.delete('/api/users/:userId/return/:bookId', async (req, res) => {
     }
 });
 
-// Добавить книгу в список желаемого
+// Добавить книгу в список желаемого (с проверкой доступности)
 app.post("/api/users/wishlist", async (req, res) => {
     try {
         const { username, bookId } = req.body;
@@ -309,19 +309,50 @@ app.post("/api/users/wishlist", async (req, res) => {
             return res.status(400).json({ message: "Недостаточно данных" });
         }
 
+        const book = await Book.findById(bookId);
+        if (!book) {
+            return res.status(404).json({ message: "Книга не найдена" });
+        }
+        
+        if (!book.inStock) {
+            return res.status(400).json({ message: "Книги нет в наличии" });
+        }
+        
+        const bookBorrowed = await User.findOne({
+            "borrowedBooks.bookId": bookId
+        });
+        
+        if (bookBorrowed) {
+            const borrower = bookBorrowed.username;
+            return res.status(400).json({ 
+                message: `Книга "${book.title}" уже взята пользователем ${borrower}` 
+            });
+        }
+
         const user = await User.findOne({ username });
         if (!user) return res.status(404).json({ message: "Пользователь не найден" });
 
-        // Проверяем, нет ли уже этой книги в списке желаемого
         if (user.wishlist.includes(bookId)) {
             return res.status(400).json({ message: "Книга уже в списке желаемого" });
+        }
+        
+        const alreadyBorrowed = user.borrowedBooks.some(
+            borrowed => borrowed.bookId.toString() === bookId
+        );
+        
+        if (alreadyBorrowed) {
+            return res.status(400).json({ message: "Вы уже взяли эту книгу" });
         }
 
         user.wishlist.push(bookId);
         await user.save();
 
-        res.status(200).json({ message: "Заявка успешно создана!" });
+        res.status(200).json({ 
+            message: "Заявка успешно создана!",
+            bookTitle: book.title
+        });
     } catch (err) {
+        console.error("Ошибка при добавлении в wishlist:", err);
         res.status(500).json({ message: "Ошибка сервера: " + err.message });
     }
 });

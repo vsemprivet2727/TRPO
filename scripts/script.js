@@ -422,7 +422,6 @@ async function loadUsers() {
                 userItem.addEventListener('click', () => {
                     const removeSelect = document.getElementById('user-borrowed-books-select');
                     if (removeSelect) {
-                        removeSelect.innerHTML = '<option value="">Книга для удаления</option>';
                         if (user.borrowedBooks && user.borrowedBooks.length > 0) {
                             user.borrowedBooks.forEach(b => {
                                 const option = document.createElement('option');
@@ -438,19 +437,36 @@ async function loadUsers() {
                     });
 
                     userItem.innerHTML = `
-                        <div style="display: flex; flex-direction: column; width: 100%">
-                            <div><strong>${user.username}</strong> (${user.email})</div>
-                            Взятые книги: ${
-                        user.borrowedBooks && user.borrowedBooks.length > 0 
-                        ? user.borrowedBooks.map(b => 
-                            b.bookId 
-                                ? b.bookId.title + " (до " + new Date(b.returnDate).toLocaleDateString() + ")"
-                                : "Книга удалена или не найдена"
-                        ).join(", ")
-                        : "Книг нет"
-            }
+    <div style="display: flex; flex-direction: column; width: 100%; gap: 8px">
+        <div style="display:flex; flex-direction: row; justify-content: space-between; align-items: center">
+            <div><strong>${user.username}</strong> (${user.email})</div>
+        </div>
+        
+        <div style="margin-top: 8px">
+            <strong>Взятые книги:</strong>
+            ${
+                user.borrowedBooks && user.borrowedBooks.length > 0 
+                ? `
+                    <div style="margin-top: 4px;">
+                        <table class="filter-box-table" style="width:100%; background-color:#fff;">
+                                ${user.borrowedBooks.map(b => `
+                                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                                        <td style="width:70%">
+                                            ${b.bookId ? b.bookId.title : "Книга удалена или не найдена"}
+                                        </td>
+                                        <td style="">
+                                            ${b.bookId ? new Date(b.returnDate).toLocaleDateString() : "-"}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                        </table>
                     </div>
-                `;
+                `
+                : '<div style="color: #666; font-style: italic">Книг нет</div>'
+            }
+        </div>
+    </div>
+`;
 
                 userList.appendChild(userItem);
                 scrollBox.appendChild(userList);
@@ -536,41 +552,66 @@ async function loadWaitingBooks(username) {
     }
 }
 
+function askToLogin() {
+    const btn = document.getElementById('request-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+        if(localStorage.getItem('currentUser') == null) {
+            alert('Что бы запросить книгу войдите в аккаунт');
+            return;
+        }
+    })
+}
+
 async function requestBook() {
     const btn = document.getElementById('request-btn');
     if (!btn) return;
 
     btn.addEventListener('click', async () => {
-    try {
-        btn.disabled = true;
-        btn.textContent = 'Отправка...';
-        const response = await fetch(`${API_URL}/users/wishlist`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                username: localStorage.getItem('currentUser'), 
-                bookId: currentSelectedBookId
-            })
-        });
+        try {
+            btn.disabled = true;
+            btn.textContent = 'Отправка...';
+            
+            const response = await fetch(`${API_URL}/users/wishlist`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: localStorage.getItem('currentUser'), 
+                    bookId: currentSelectedBookId
+                })
+            });
 
-        if (!response.ok) {
-            const text = await response.text();
-            console.error("Ошибка при добавлении в список желаемого:", text);
-            throw new Error(`Ошибка запроса: ${response.status}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (response.status === 400 && errorData.message.includes("Книги нет в наличии")) {
+                    alert(errorData.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Запросить';
+                    return;
+                }  else if (response.status === 400 & errorData.message.includes("Книга уже в списке желаемого")) {
+                    alert(errorData.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Запросить';
+                    return;
+                }
+
+                throw new Error(`Ошибка запроса: ${response.status}`);
+            }
+
+            const result = await response.json();
+            alert(result.message);
+            btn.textContent = 'Добавлено';
+
+        } catch (error) {
+            console.log(error);
+            alert('Не удалось добавить книгу в список желаемого. Попробуйте снова.');
+        } finally {
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.textContent = 'Запросить';
+            }, 300);
         }
-
-        const result = await response.json();
-        alert(result.message);
-        btn.textContent = 'Добавлено';
-        setTimeout(() => {
-            btn.textContent = 'Запросить';
-        }, 300);
-    } catch (error) {
-        console.log(error);
-        btn.textContent = 'Запросить';
-        alert('Не удалось добавить книгу в список желаемого. Попробуйте снова.');
-    }
-    })
+    });
 }
 
 function setupDenyButtonDelegation() {
@@ -1050,6 +1091,7 @@ if (btnExport) {
 
     if (path.includes("UserPages")) {
         logOut();
+        askToLogin();
         if (currentUser && userDisplay)
             userDisplay.innerHTML = `<img src="../resources/User.png" alt=""> ${currentUser}`;
 
