@@ -505,7 +505,7 @@ async function loadUserBooks(username) {
             bookItem.className = 'scroll-box-item book-card';
             bookItem.style.aspectRatio = '7/1'
             bookItem.innerHTML = `
-                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
+                <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%">
                     <div style="display: flex; flex-direction: column; text-align: left;">
                         <span style="font-weight: bold;">${book.title}</span>
                         <small>${book.author}</small>
