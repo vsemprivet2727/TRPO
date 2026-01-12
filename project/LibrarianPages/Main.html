@@ -18,16 +18,16 @@
         </nav>
         
         <div class="header-buttons">
-            <a href="../Auth.html" class="btn-login"><img src="../resources/User.png" alt="Войти">Профиль</a>
+            <a href="../Auth.html" class="btn-login" id="user-display-name"><img src="../resources/User.png" alt="Войти">Профиль</a>
         </div>
     </header>
     
     <main>
         <div class="flexscroll-box">
-            <div class="modal-box" id="add-book" style="display: none;">
+            <dialog class="modal-content" id="add-book">
                 <h3 align="center">Добавить книгу</h1>
                     <form action="">
-                    <table class="filter-box-table">
+                    <table class="filter-box-table" style="width: 100%">
                         <tr>
                             <td><label for="new-book-name">Название</label></td>
                             <td><input type="text" name="" id="new-book-name"></td>
@@ -64,10 +64,10 @@
                         <button class="btn btn-primary" onclick="closeAddBook()">Закрыть</button>
                         <button class="btn btn-primary" id="add-new-book">Добавить</button>
                     </div>
-                </div>
-                        <div class="modal-box" id="remove-book" style="display: none;">
+                </dialog>
+                        <dialog class="modal-content" id="remove-book">
                             <h3 align="center">Удалить книгу</h3> 
-                            <table class="filter-box-table">
+                            <table class="filter-box-table" style="width: 100%">
                             <tr>
                                 <td><label for="select-for-remove">Книга</label></td>
                                 <td>
@@ -81,7 +81,7 @@
                                 <button class="btn btn-primary" onclick="closeRemoveBook()">Закрыть</button>
                                 <button class="btn btn-primary" id="remove-book-btn">Удалить</button>
                             </div>
-                        </div>
+                        </dialog>
         <div class="tabs">
             <a id="tab-add-book" onclick="openAddBook()"class="active"><img src="../resources/tabs/add-book.png" alt=""></a>
             <a id="tab-remove-book" onclick="openRemoveBook()"><img src="../resources/tabs/remove-book.png" alt=""></a>
@@ -94,16 +94,8 @@
                     <input type="text" id="input-search">
                 </div>
                 <div class="filters" id="filter-container" onclick="filtersClicked()">
-                    <img src="../resources/tabs/filter.png" alt="" width="18px" height="18px" style="cursor: pointer;">
+                    <img id="filter-btn" src="../resources/tabs/filter.png" alt="" width="18px" height="18px" style="cursor: pointer;" onclick="filtersClicked()">
                 <table class="filter-box-table" id="filters-table">
-                    <tr>
-                        <td><label for="checkbox-is-we-have">В наличии</label></td>
-                        <td>
-                            <div class="in-stock-thumbler" onclick="inStockClicked()" id="thumbler">
-                                <div id="checkbox-is-we-have" class="in-stock-thumbler-btn"></div>
-                            </div>
-                        </td>
-                    </tr>
                     <tr>
                         <td><label for="select-sort">Сортировать</label></td>
                         <td>

@@ -189,10 +189,17 @@ main {
     box-shadow: inset 0px 0px 30px #fff;
 }
 
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 50px;
+}
+
 .top-panel {
     position: absolute;
     z-index: 1000;
-    width:75%;
+    width:40vw;
     max-width: 800px;
     height: fit-content;
     display: flex;
@@ -332,6 +339,8 @@ main {
 }
 
 .modal-box {
+    display: flex;
+    position: absolute;
     align-self: center;
     justify-self: center;
     overflow-y: auto;
@@ -345,35 +354,29 @@ main {
     border: none;
     padding: 25px;
     border-radius: 40px;
+    opacity: 1;
     box-shadow: 0px 0px 30px rgba(0,0,0,0.2);
     transition: all 0.3s ease-in-out;
 }
 
-.modal-box .btn-primary{
+.modal-content .btn-primary {
     background-color: #fdefd9;;
     margin: none;
     border-radius: 15px;
     transition: all 0.3s ease;
 }
-.modal-box .btn-primary:hover {
+.modal-content .btn-primary:hover {
     box-shadow: 0px 0px 30px #FFCF88a1;
-    background-color: #FFCF88a1;;
-}
-
-.modal-box.active{
-    display: flex;
-    opacity: 1;
-    box-shadow: 0px 0px 30px #ffcf88;
+    background-color: #FFCF88a1;
 }
 
 .modal-box-btns {
     position: relative;
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 50px;
     align-content: center;
-    width: fit-content;
 }
 
 .filter-box button.btn-primary{
@@ -488,6 +491,8 @@ main {
     background-color: rgba(0,0,0,0.5);
 }
 .modal-content {
+    border: none;
+    overflow-x: hidden;
     background-color: white;
     margin: 15% auto;
     padding: 50px;
@@ -611,7 +616,7 @@ main {
     align-self: center;
     position: relative;
     opacity: 1;
-    gap:5px;
+    gap: 5px;
     transition: all 0.3s ease-out;
 }
 
@@ -625,25 +630,38 @@ main {
     border-radius: 50%;
 }
 .tabs a:hover {
-    box-shadow: 0px 0px 30px #ffcf88;
-    background-color: #ffcf88a1;
+    transform:  scale(1.05);
 }
+
+.tabs a:active {
+    transform: scale(0.95)
+}
+
 .tabs img {
     aspect-ratio: 1/1;
     width: 50px;
 }
 
 @media (max-width: 500px) {
-    body {
+    main {
         overflow-y: scroll;
     }
+
     .nav {
         display: flex;
         align-items: start;
     }
 
+    .nav-list {
+        gap: 10px;
+    }
+
+    .nav-list  a {
+        max-width: 50px;
+    }
+
     .btn-login {
-        display: none;
+        display: flex;
     }
 
     .btn-option {
@@ -653,22 +671,29 @@ main {
 
     .flexscroll-box {
         flex-direction: column-reverse;
-        margin: 30px;
+        margin: 5px;
         padding-bottom: 5vw;
         height: auto;
     }
+
     .scroll-box {
         width: 100%;
         border-radius: 0px;
         border-top-left-radius: 30px;
         border-top-right-radius: 30px;
     }
+
+    .books-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
     .filter-box {
         width: 100%;
         border-radius: 0px;
         border-bottom-left-radius: 30px;
         border-bottom-right-radius: 30px;
     }
+
     .tabs {
         width: 100%;
         max-width: none;

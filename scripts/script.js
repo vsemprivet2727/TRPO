@@ -36,10 +36,6 @@ function displayBooks(books) {
 
     const gridContainer = document.createElement('div');
     gridContainer.className = 'books-grid';
-    gridContainer.style.display = 'grid';
-    gridContainer.style.gridTemplateColumns = 'repeat(3, 1fr)';
-    gridContainer.style.gap = '20px';
-    gridContainer.style.marginTop = '50px';
     
     if (books.length === 0) {
         scrollBox.innerHTML = '<p>Книги не найдены</p>';
@@ -68,6 +64,7 @@ function displayBooks(books) {
 document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById('bookModal');
     const closeBtn = document.querySelector('.close');
+    const filters = document.getElementById('filter-container');
 
     closeBtn.addEventListener('click', () => {
         modal.style.display = 'none';
@@ -196,6 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 const result = await response.json();
                 alert("Книга добавлена!");
+
+
                 
                 location.reload();
             } else {
@@ -323,6 +322,8 @@ async function applyFilters() {
     try {
         const response = await fetch(`${API_URL}/books?` + params.toString());
         const books = await response.json();
+
+        displayBooks(books);
     } catch (err) {
         console.error("Ошибка фильтрации:", err);
     }
@@ -376,7 +377,7 @@ function setupFilterListeners() {
     if (yearInput) yearInput.addEventListener("input", applyFilters);
 
     const stockCb = document.getElementById("checkbox-is-we-have");
-    if (stockCb) stockCb.addEventListener("change", applyFilters);
+    if (stockCb) stockCb.addEventListener("click", applyFilters);
 }
 
 async function loadUsers() {
@@ -409,8 +410,10 @@ async function loadUsers() {
             scrollBox.innerHTML += '<p style="padding:10px;">Пользователи не найдены</p>';
             return;
         }
+        if (document.getElementById('scroll-users')) document.getElementById('scroll-users').remove();
         const userList = document.createElement('div');
         userList.style.marginTop = '40px'; 
+        userList.id = 'scroll-users';
         users.forEach(user => {
             if (user.username != 'admin') {
                 const userItem = document.createElement('div');
@@ -422,6 +425,7 @@ async function loadUsers() {
                 userItem.addEventListener('click', () => {
                     const removeSelect = document.getElementById('user-borrowed-books-select');
                     if (removeSelect) {
+                        removeSelect.innerHTML = '';
                         if (user.borrowedBooks && user.borrowedBooks.length > 0) {
                             user.borrowedBooks.forEach(b => {
                                 const option = document.createElement('option');
@@ -745,13 +749,13 @@ async function sort() {
             sortedBooks.sort((a,b) => 
                 a.title.toLowerCase().localeCompare(b.title.toLowerCase())
         );
-            displayBooks(sortedBooks);
-        }
-        if (param.value === 'author') {
-            sortedBooks.sort((a, b) =>
-                a.author.toLowerCase().localeCompare(b.author.toLowerCase())
-            );
-        }
+    }
+    if (param.value === 'author') {
+        sortedBooks.sort((a, b) =>
+            a.author.toLowerCase().localeCompare(b.author.toLowerCase())
+        );
+    }
+    displayBooks(sortedBooks);
     } catch (error) {
         console.log('Ошибка: ', error)
     }
@@ -780,28 +784,20 @@ function filtersClicked(){
 function openAddBook() {
     const window = document.getElementById('add-book');
     closeRemoveBook()
-    window.style.display = 'flex';
-    window.classList.add('active');
+    window.showModal();
 }
 function closeAddBook() {
     const window = document.getElementById('add-book');
-    window.classList.remove('active');
-    setTimeout(() => {
-        window.style.display = 'none'
-    }, 300)
+    window.close()
 }
 function openRemoveBook() {
     const window = document.getElementById('remove-book');
     closeAddBook();
-    window.style.display = 'flex';
-    window.classList.add('active');
+    window.showModal();
 }
 function closeRemoveBook() {
     const window = document.getElementById('remove-book');
-    window.classList.remove('active');
-    setTimeout(() => {
-        window.style.display = 'none'
-    }, 300)
+    window.close();
 }
 
 function inStockClicked() {
@@ -901,6 +897,26 @@ function modalUserOpen(user) {
 function modalUserClose() {
     const modal = document.getElementById('button-add-container');
     modal.close();
+}
+
+async function fillBookSelector() {
+    const bookSelect = document.getElementById('book-select');
+
+    if(!bookSelect) return;
+
+    const response = await fetch(`${API_URL}/books`);
+
+    if(!response.ok) return;
+
+    const books = await response.json();
+    console.log();
+
+    books.forEach(book => {
+        const option = document.createElement('option');
+        option.value = book._id || book.id;
+        option.textContent = book.title || 'Книга не найдена';
+        bookSelect.appendChild(option);
+    })
 }
 
 // Функция для установки дат по умолчанию
@@ -1055,8 +1071,8 @@ if (btnExport) {
             alert("Ошибка при чтении данных");
         }
     });
-}
-    //Конец экспорта
+    }
+
 
 
     const currentUser = localStorage.getItem('currentUser');
@@ -1080,12 +1096,6 @@ if (btnExport) {
             loadUsers();
             fillBookSelector();
             setDefaultDates();
-
-            const nameInput = document.getElementById('search-input-name');
-            const emailInput = document.getElementById('search-input-email');
-
-            if (nameInput) nameInput.addEventListener('input', loadUsers);
-            if (emailInput) emailInput.addEventListener('input', loadUsers);
         }
     }
 
@@ -1121,7 +1131,7 @@ if (btnExport) {
 
 if (btnAddBookToUser) {
     btnAddBookToUser.addEventListener('click', async () => {
-        const userId = localStorage.getItem('userData')
+        const userId = localStorage.getItem('userData') 
         const bookId = document.getElementById('book-select').value;
         const startDate = document.getElementById('input-date-start').value;
         const returnDate = document.getElementById('input-date-end').value;

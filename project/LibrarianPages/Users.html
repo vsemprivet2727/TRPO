@@ -17,7 +17,7 @@
         </nav>
         
         <div class="header-buttons">
-            <a href="../Auth.html" class="btn-login"><img src="../resources/User.png" alt="">Профиль</a>        
+            <a href="../Auth.html" class="btn-login" id="user-display-name"><img src="../resources/User.png" alt="">Профиль</a>        
         </div>
     </header>
     
@@ -29,13 +29,28 @@
                     <img src="../resources/search.png" alt="">
                     <input type="text" id="input-search">
                 </div>
-                <div class="filters" id="filter-container" onclick="filtersClicked()">
-                    <img src="../resources/tabs/add.png" alt="" width="18px" height="18px" style="cursor: pointer; margin-top: 1px;">
+                </div>  
+            </div>
+
+        </div>
+        <dialog class="modal-content" id="button-add-container" style="display: flex; flex-direction: column; gap: 10px;">
+                <div id="button-add-container" class="filters active">
+                    <span class="close" onclick="modalUserClose()">&times;</span>
                     <table class="filter-box-table">
                         <tr>
-                            <td><label for="search-input-email">Почта</label></td>
-                            <td><input type="text" id="search-input-email" class="user-search-email" placeholder="example@mail.com"></td>
+                            <td style="width:300px">
+                                <select id="user-borrowed-books-select" multiple="4">
+                                </select>
+                            </td>
                         </tr>
+                    </table>
+                        <div style="display: flex; flex-direction: row; width:fit-content; gap: 5px; justify-content: center;">
+                            <button class="btn btn-primary" id="button-remove">Удалить из списка</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="filters active" id="filter-container">
+                        <table class="filter-box-table">
                         <tr>
                             <td><label for="book-select">Книга</label></td>
                             <td>
@@ -59,25 +74,6 @@
                         Экспорт должников
                     </button>
                 </div>
-                </div>  
-            </div>
-
-        </div>
-        <dialog class="modal-box" id="button-add-container">
-                <div id="button-add-container" class="filter-box" style="display: flex; flex-direction: column;">
-                    <span class="close" onclick="modalUserClose()">&times;</span>
-                    <table class="filter-box-table">
-                        <tr>
-                            <td style="width:300px">
-                                <select id="user-borrowed-books-select" multiple="4">
-                                    <option value=""></option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                        <div style="display: flex; flex-direction: row; width:fit-content; gap: 5px; justify-content: left;">
-                            <button class="btn btn-primary" id="button-remove">Удалить из списка</button>
-                    </div>
                 </div>
         </dialog>
     </main>

@@ -285,7 +285,7 @@ app.post('/api/users/accept-wishlist', async (req, res) => {
     }
 });
 
-//DELET запрос на удаление книги у пользователя
+//DELETE запрос на удаление книги у пользователя
 app.delete('/api/users/:userId/return/:bookId', async (req, res) => {
     try {
         const { userId, bookId } = req.params;
