@@ -503,6 +503,7 @@ async function loadUserBooks(username) {
         books.forEach(book => {
             const bookItem = document.createElement('div');
             bookItem.className = 'scroll-box-item book-card';
+            bookItem.style.aspectRatio = '7/1'
             bookItem.innerHTML = `
                 <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
                     <div style="display: flex; flex-direction: column; text-align: left;">
